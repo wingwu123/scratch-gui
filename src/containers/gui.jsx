@@ -19,6 +19,13 @@ import {
 } from '../reducers/editor-tab';
 
 import {
+    targetTabActivate,
+    DEVICE_TAB_INDEX,
+    ROLE_TAB_INDEX,
+    STAGE_TAB_INDEX
+} from '../reducers/target-tab';
+
+import {
     closeCostumeLibrary,
     closeBackdropLibrary,
     closeTelemetryModal,
@@ -127,6 +134,7 @@ const mapStateToProps = state => {
     const loadingState = state.scratchGui.projectState.loadingState;
     return {
         activeTabIndex: state.scratchGui.editorTab.activeTabIndex,
+		targetTabIndex: state.scratchGui.targetTab.activeTabIndex,
         alertsVisible: state.scratchGui.alerts.visible,
         backdropLibraryVisible: state.scratchGui.modals.backdropLibrary,
         blocksTabVisible: state.scratchGui.editorTab.activeTabIndex === BLOCKS_TAB_INDEX,
@@ -160,7 +168,8 @@ const mapDispatchToProps = dispatch => ({
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
-    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal())
+    onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
+	onTargetTabActivate: tab => dispatch(targetTabActivate(tab))
 });
 
 const ConnectedGUI = injectIntl(connect(

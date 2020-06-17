@@ -13,6 +13,7 @@ import Renderer from 'scratch-render';
 import Blocks from '../../containers/blocks.jsx';
 import CostumeTab from '../../containers/costume-tab.jsx';
 import TargetPane from '../../containers/target-pane.jsx';
+import StagePane from '../../containers/stage-pane.jsx';
 import SoundTab from '../../containers/sound-tab.jsx';
 import StageWrapper from '../../containers/stage-wrapper.jsx';
 import Loader from '../loader/loader.jsx';
@@ -56,6 +57,7 @@ const GUIComponent = props => {
     const {
         accountNavOpen,
         activeTabIndex,
+		targetTabIndex,
         alertsVisible,
         authorId,
         authorThumbnailUrl,
@@ -110,9 +112,12 @@ const GUIComponent = props => {
         onTelemetryModalCancel,
         onTelemetryModalOptIn,
         onTelemetryModalOptOut,
+		onTargetTabActivate,
         showComingSoon,
         soundsTabVisible,
         stageSizeMode,
+		stage,
+		editingTarget,
         targetIsStage,
         telemetryModalVisible,
         tipsLibraryVisible,
@@ -342,10 +347,95 @@ const GUIComponent = props => {
                                 vm={vm}
                             />
                             <Box className={styles.targetWrapper}>
-                                <TargetPane
+							<Tabs
+                                forceRenderTabPanel
+                                className={tabClassNames.tabs}
+                                selectedIndex={targetTabIndex}
+                                selectedTabClassName={tabClassNames.tabSelected}
+                                selectedTabPanelClassName={tabClassNames.tabPanelSelected}
+                                onSelect={tab => { 
+								
+									console.log('onSelect ' + tab);
+									onTargetTabActivate(tab);
+									return true;
+								}}
+                            >
+							<TabList className={tabClassNames.tabList}>
+                                    <Tab 
+										className={tabClassNames.tab}
+									>
+                                        <img
+                                            draggable={false}
+                                            src={codeIcon}
+                                        />
+                                        <FormattedMessage
+                                            defaultMessage="Device"
+                                            description="Button to get to the device panel"
+                                            id="gui.gui.deviceTab"
+                                        />
+                                    </Tab>
+									<Tab 
+										className={tabClassNames.tab}
+									>
+                                        <img
+                                            draggable={false}
+                                            src={codeIcon}
+                                        />
+                                        <FormattedMessage
+                                            defaultMessage="Role"
+                                            description="Button to get to the role panel"
+                                            id="gui.gui.roleTab"
+                                        />
+                                    </Tab>
+									{
+										stage.id ? (
+											<Tab 
+												className={tabClassNames.tab}
+											>
+												<img
+													draggable={false}
+													src={codeIcon}
+												/>
+												<FormattedMessage
+													defaultMessage="Stage"
+													description="Button to get to the stage panel"
+													id="gui.gui.stageTab"
+												/>
+											</Tab>
+										
+										) : null
+									}
+									
+							</TabList>
+
+								<TabPanel className={tabClassNames.tabPanel}>
+                                    <TargetPane
                                     stageSize={stageSize}
                                     vm={vm}
-                                />
+									/>
+                                </TabPanel>
+								<TabPanel className={tabClassNames.tabPanel}>
+                                    <TargetPane
+                                    stageSize={stageSize}
+                                    vm={vm}
+									/>
+                                </TabPanel>
+								{
+									stage.id ? (
+									
+										<TabPanel className={tabClassNames.tabPanel}>
+											{
+												<StagePane
+												vm={vm}
+												/>
+											}
+											
+										</TabPanel>
+									) : null
+								}
+								
+							</Tabs>
+                                
                             </Box>
                         </Box>
                     </Box>
@@ -442,7 +532,9 @@ GUIComponent.defaultProps = {
 
 const mapStateToProps = state => ({
     // This is the button's mode, as opposed to the actual current state
-    stageSizeMode: state.scratchGui.stageSize.stageSize
+    stageSizeMode: state.scratchGui.stageSize.stageSize,
+	stage: state.scratchGui.targets.stage,
+	editingTarget: state.scratchGui.targets.editingTarget
 });
 
 export default injectIntl(connect(
