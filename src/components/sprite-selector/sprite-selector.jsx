@@ -80,7 +80,7 @@ const SpriteSelectorComponent = function (props) {
             className={styles.spriteSelector}
             {...componentProps}
         >
-
+		
             <SpriteInfo
                 direction={selectedSprite.direction}
                 disabled={spriteInfoDisabled}
@@ -112,6 +112,7 @@ const SpriteSelectorComponent = function (props) {
                 onExportSprite={onExportSprite}
                 onSelectSprite={onSelectSprite}
             />
+			
             <ActionMenu
                 className={styles.addButton}
                 img={spriteIcon}
@@ -142,6 +143,7 @@ const SpriteSelectorComponent = function (props) {
                 tooltipPlace={isRtl(intl.locale) ? 'right' : 'left'}
                 onClick={onNewSpriteClick}
             />
+		
         </Box>
     );
 };

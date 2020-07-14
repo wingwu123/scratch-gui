@@ -3,6 +3,8 @@ import React from 'react';
 
 import VM from 'scratch-vm';
 
+import Box from '../box/box.jsx';
+
 import SpriteLibrary from '../../containers/sprite-library.jsx';
 import StageSelector from '../../containers/stage-selector.jsx';
 import {STAGE_DISPLAY_SIZES} from '../../lib/layout-constants';
@@ -27,11 +29,12 @@ const StagePane = ({
     vm,
     ...componentProps
 }) => (
-    <div
-        className={styles.stagePane}
-        {...componentProps}
-    >
-        <div className={styles.stageSelectorWrapper}>
+
+	<Box
+            className={styles.spriteSelector}
+            {...componentProps}
+        >
+		<div className={styles.stageSelectorWrapper}>
             {stage.id && <StageSelector
                 asset={
                     stage.costume &&
@@ -52,7 +55,8 @@ const StagePane = ({
                 ) : null}
             </div>
         </div>
-    </div>
+		
+	</Box>	
 );
 
 const spriteShape = PropTypes.shape({

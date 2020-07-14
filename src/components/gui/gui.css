@@ -319,3 +319,7 @@ $fade-out-distance: 15px;
 :global(.ReactModal__Body--open) {
     overflow: hidden;
 }
+
+.dock-content{
+    display: flex;
+}

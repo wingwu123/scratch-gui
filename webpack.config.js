@@ -6,6 +6,7 @@ var webpack = require('webpack');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
+// var MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 
 // PostCss
 var autoprefixer = require('autoprefixer');
@@ -13,6 +14,7 @@ var postcssVars = require('postcss-simple-vars');
 var postcssImport = require('postcss-import');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
+const CODEMIRROR_PATH = path.resolve(__dirname, "./node_modules/codemirror");
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -60,6 +62,23 @@ const base = {
         },
         {
             test: /\.css$/,
+            include: [CODEMIRROR_PATH],
+            use: [
+                {
+                    loader: "style-loader"
+                }, {
+                    loader: "css-loader"
+                }, {
+                    loader: 'postcss-loader',
+                    options:{
+                        plugins: () => [require('autoprefixer')]
+                    }
+                    
+                }]
+        },
+        {
+            test: /\.css$/,
+            exclude:[CODEMIRROR_PATH],
             use: [{
                 loader: 'style-loader'
             }, {
@@ -83,6 +102,12 @@ const base = {
                     }
                 }
             }]
+        },
+        {
+            // resource: path.resolve(__dirname, 'node_modules/monaco-editor/esm/vs/base/browser/ui/codiconLabel/codicon/codicon.ttf') ,
+            // use: {
+            //     loader: "file-loader"
+            // }
         }]
     },
     optimization: {
@@ -92,7 +117,11 @@ const base = {
             })
         ]
     },
-    plugins: []
+    plugins: [
+        // new MonacoWebpackPlugin({
+		// 	languages: ["typescript", "javascript", "css","cpp"],
+		// })
+    ]
 };
 
 module.exports = [
