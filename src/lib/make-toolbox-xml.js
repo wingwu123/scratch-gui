@@ -138,6 +138,87 @@ const motion = function (isStage, targetId) {
     `;
 };
 
+
+const device_motion = function (deviceType, targetId) {
+
+    return `
+    <category name="%{BKY_CATEGORY_MOTION}" id="motion" colour="#4C97FF" secondaryColour="#3373CC">
+        ${`
+        <block type="motion_set_encoder_motor">
+            <value name="POWER">
+                <shadow type="math_number">
+                    <field name="NUM">30</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="motion_set_dc_motor">
+            <value name="POWER">
+                <shadow type="math_number">
+                    <field name="NUM">30</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="motion_smart_servo_angle">
+            <value name="SERVO_ID">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+            <value name="SPEED">
+                <shadow type="math_number">
+                    <field name="NUM">40</field>
+                </shadow>
+            </value>
+            <value name="ANGLE">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="motion_smart_servo">
+            <value name="SERVO_ID">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+            <value name="SPEED">
+                <shadow type="math_number">
+                    <field name="NUM">40</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="motion_servo">
+            <value name="SPEED">
+                <shadow type="math_number">
+                    <field name="NUM">40</field>
+                </shadow>
+            </value>
+            <value name="ANGLE">
+                <shadow type="math_number">
+                    <field name="NUM">90</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="motion_step_motor">
+            <value name="POWER">
+                <shadow type="math_number">
+                    <field name="NUM">30</field>
+                </shadow>
+            </value>
+            <value name="STEPS">
+                <shadow type="math_number">
+                    <field name="NUM">100</field>
+                </shadow>
+            </value>
+        </block>
+        ${blockSeparator}
+        <block type="motion_set_electromagnet"/>
+        <block type="motion_set_digital_output"/>`}
+        ${categorySeparator}
+    </category>
+    `;
+};
+
 const xmlEscape = function (unsafe) {
     return unsafe.replace(/[<>&'"]/g, c => {
         switch (c) {
@@ -282,6 +363,51 @@ const looks = function (isStage, targetId, costumeName, backdropName) {
             <block id="backdropnumbername" type="looks_backdropnumbername"/>
             <block id="${targetId}_size" type="looks_size"/>
         `}
+        ${categorySeparator}
+    </category>
+    `;
+};
+
+
+const device_looks = function (deviceType, targetId) {
+
+    return `
+    <category name="%{BKY_CATEGORY_LOOKS}" id="looks" colour="#9966FF" secondaryColour="#774DCB">
+        ${`
+        <block type="looks_set_emotion">
+        </block>
+        <block type="looks_off_emotion"/>
+        <block type="looks_set_symbol"/>
+        <block type="looks_off_led_matrix"/>
+        ${blockSeparator}
+        <block type="looks_set_digital_tube">
+            <value name="VALUE">
+                <shadow type="math_number">
+                    <field name="NUM">0</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="looks_clear_digital_tube"/>
+        ${blockSeparator}
+        <block type="looks_set_led_light_rgb">
+            <value name="R">
+                <shadow type="math_number">
+                    <field name="NUM">255</field>
+                </shadow>
+            </value>
+            <value name="G">
+                <shadow type="math_number">
+                    <field name="NUM">255</field>
+                </shadow>
+            </value>
+            <value name="B">
+                <shadow type="math_number">
+                    <field name="NUM">255</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="looks_set_led_light_color"/>
+        <block type="looks_off_led_light"/>`}
         ${categorySeparator}
     </category>
     `;
@@ -496,6 +622,40 @@ const sensing = function (isStage) {
         <block type="sensing_dayssince2000"/>
         ${blockSeparator}
         <block type="sensing_username"/>
+        ${categorySeparator}
+    </category>
+    `;
+};
+
+
+const device_sensing = function (deviceType, targetId) {
+
+    return `
+    <category name="%{BKY_CATEGORY_SENSING}" id="sensing" colour="#4CBFE6" secondaryColour="#2E8EB8">
+        ${`
+        <block type="sensing_gray_detected_line">
+        </block>
+        <block type="sensing_gray_value"/>
+        ${blockSeparator}
+        <block type="sensing_flame_value"/>
+        ${blockSeparator}
+        <block type="sensing_temperature_value"/>
+        <block type="sensing_humidity_value"/>
+        ${blockSeparator}
+        <block type="sensing_volume_value"/>
+        <block type="sensing_ambient_light_value"/>
+        <block type="sensing_ultrasonic_detection_distance"/>
+
+        <block type="sensing_gas_pressure"/>
+        <block type="sensing_infrared_receiver"/>
+        <block type="sensing_potentiometer"/>
+        <block type="sensing_bluetooth_receiver"/>
+        <block type="sensing_jointed_arm"/>
+        <block type="sensing_touch_button"/>
+        <block type="sensing_gyroscope"/> 
+        <block type="sensing_limit_switch"/>
+        <block type="sensing_water_temperature"/>
+        <block type="sensing_analog_input"/> `}
         ${categorySeparator}
     </category>
     `;
@@ -726,7 +886,7 @@ const xmlClose = '</xml>';
  * @returns {string} - a ScratchBlocks-style XML document for the contents of the toolbox.
  */
 const makeToolboxXML = function (isStage, targetId, categoriesXML = [],
-    costumeName = '', backdropName = '', soundName = '') {
+    costumeName = '', backdropName = '', soundName = '', deviceType = '') {
     const gap = [categorySeparator];
 
     costumeName = xmlEscape(costumeName);
@@ -743,28 +903,61 @@ const makeToolboxXML = function (isStage, targetId, categoriesXML = [],
         }
         // return `undefined`
     };
-    const motionXML = moveCategory('motion') || motion(isStage, targetId);
-    const looksXML = moveCategory('looks') || looks(isStage, targetId, costumeName, backdropName);
-    const soundXML = moveCategory('sound') || sound(isStage, targetId, soundName);
-    const eventsXML = moveCategory('event') || events(isStage, targetId);
-    const controlXML = moveCategory('control') || control(isStage, targetId);
-    const sensingXML = moveCategory('sensing') || sensing(isStage, targetId);
-    const operatorsXML = moveCategory('operators') || operators(isStage, targetId);
-    const variablesXML = moveCategory('data') || variables(isStage, targetId);
-    const myBlocksXML = moveCategory('procedures') || myBlocks(isStage, targetId);
-
-    const everything = [
+    
+    let everything = [
         xmlOpen,
-        motionXML, gap,
-        looksXML, gap,
-        soundXML, gap,
-        eventsXML, gap,
-        controlXML, gap,
-        sensingXML, gap,
-        operatorsXML, gap,
-        variablesXML, gap,
-        myBlocksXML
     ];
+
+    if(deviceType == '')
+    {
+        const motionXML = moveCategory('motion') || motion(isStage, targetId);
+        everything = everything.concat([motionXML, gap]);
+    }
+    else
+    {
+        const motionXML = device_motion(deviceType, targetId);
+        everything = everything.concat([motionXML, gap]);
+    }
+
+    if(deviceType == '')
+    {
+        const looksXML = moveCategory('looks') || looks(isStage, targetId, costumeName, backdropName);
+        everything = everything.concat([looksXML, gap]);
+    
+        const soundXML = moveCategory('sound') || sound(isStage, targetId, soundName);
+        everything = everything.concat([soundXML, gap]);
+    }
+    else
+    {
+        const looksXML = device_looks(deviceType, targetId);
+        everything = everything.concat([looksXML, gap]);
+    }
+
+    const eventsXML = moveCategory('event') || events(isStage, targetId);
+    everything = everything.concat([eventsXML, gap]);
+
+    const controlXML = moveCategory('control') || control(isStage, targetId);
+    everything = everything.concat([controlXML, gap]);
+
+    if(deviceType == '')
+    {
+        const sensingXML = moveCategory('sensing') || sensing(isStage, targetId);
+        everything = everything.concat([sensingXML, gap]);
+    }
+    else
+    {
+        const sensingXML = device_sensing(deviceType, targetId);
+        everything = everything.concat([sensingXML, gap]);
+    }
+
+    const operatorsXML = moveCategory('operators') || operators(isStage, targetId);
+    everything = everything.concat([operatorsXML, gap]);
+
+    const variablesXML = moveCategory('data') || variables(isStage, targetId);
+    everything = everything.concat([variablesXML, gap]);
+
+    const myBlocksXML = moveCategory('procedures') || myBlocks(isStage, targetId);
+    everything = everything.concat([myBlocksXML]);
 
     for (const extensionCategory of categoriesXML) {
         everything.push(gap, extensionCategory.xml);

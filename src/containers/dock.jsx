@@ -73,44 +73,6 @@ class Dock extends React.Component {
 
     componentDidMount() {
 
-        if ('editorRef' in this) {
-
-
-
-            /*
-
-        this.editor = monaco.editor.create(element, {
-            value: [
-                '#include <iostream>',
-                'using namespace std;',
-                'int main(int argc, char* argv[])',
-                '{',
-                '    cout << \"Hello, world! 1 \" << endl;',
-                '    cout << \"Hello, world! 2 \" << endl;',
-                '    cout << \"Hello, world! 3 \" << endl;',
-                '    cout << \"Hello, world! 4 \" << endl;',
-                '    cout << \"Hello, world! 5 \" << endl;',
-                '    cout << \"Hello, world! 6 \" << endl;',
-                '    cout << \"Hello, world! 7 \" << endl;',
-                '    cout << \"Hello, world! 8 \" << endl;',
-                '    cout << \"Hello, world! 9 \" << endl;',
-                '    cout << \"Hello, world! 10 \" << endl;',
-                '    return 0;',
-                '}'
-            ].join('\n'),
-            language: 'cpp',
-            automaticLayout: true//,
-            //lineNumbers:"on",
-            //fixedOverflowWidgets:true,
-            //readOnly:true,
-            //contextmenu:false,
-            //minimap:{enabled:false}
-        });
-        */
-
-
-        }
-
     }
 
     componentWillUnmount() {
@@ -199,12 +161,6 @@ class Dock extends React.Component {
             '}'
         ].join('\n');
 
-                        /*
-
-                    <div id={"code-editor"} style={{width:"100%",height:"100%"}} ref={(ref)=>{this.editorRef = ref;}} />
-                    
-                
-                    */
 
         return (
 
@@ -240,9 +196,7 @@ class Dock extends React.Component {
                         }}
                     />
                 </div>
-
                 
-
             </DockComponent>
 
         );

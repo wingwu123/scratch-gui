@@ -23,6 +23,7 @@ import {fetchSprite, fetchCode} from '../lib/backpack-api';
 import randomizeSpritePosition from '../lib/randomize-sprite-position';
 import downloadBlob from '../lib/download-blob';
 
+
 class TargetPane extends React.Component {
     constructor (props) {
         super(props);
@@ -99,6 +100,7 @@ class TargetPane extends React.Component {
         });
     }
     handleSelectSprite (id) {
+
         this.props.vm.setEditingTarget(id);
         if (this.props.stage && id !== this.props.stage.id) {
             this.props.onHighlightTarget(id);

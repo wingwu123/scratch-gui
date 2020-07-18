@@ -30,6 +30,7 @@ const projectData = translateFunction => {
         targets: [
             {
                 isStage: true,
+                devType:"",
                 name: 'Stage',
                 variables: {
                     '`jEk@4|i[#Fk?(8x)AV.-my variable': [
@@ -66,6 +67,7 @@ const projectData = translateFunction => {
             },
             {
                 isStage: false,
+                devType:"",
                 name: translator(messages.sprite, {index: 1}),
                 variables: {},
                 lists: {},

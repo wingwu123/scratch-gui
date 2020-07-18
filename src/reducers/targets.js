@@ -36,6 +36,13 @@ const reducer = function (state, action) {
     }
 };
 const updateTargets = function (targetList, editingTarget) {
+
+    console.trace("--tragets updateTargets--");
+
+    for (const key in targetList[0]) {
+        console.log("editingTarget deviceType: ", key );
+    }
+
     return {
         type: UPDATE_TARGET_LIST,
         targets: targetList,
