@@ -30,7 +30,17 @@ const modes = {
     list: ListMonitor
 };
 
-const MonitorComponent = props => (
+const MonitorComponent = props => {
+
+    for (const key in props) {
+        if (props.hasOwnProperty(key)) {
+            console.log('--MonitorComponent--', key)
+            
+        }
+    }
+
+    return (
+
     <ContextMenuTrigger
         disable={!props.draggable}
         holdToDisplay={props.mode === 'slider' ? -1 : 1000}
@@ -112,7 +122,8 @@ const MonitorComponent = props => (
         ), document.body)}
     </ContextMenuTrigger>
 
-);
+    );
+};
 
 MonitorComponent.categories = categories;
 

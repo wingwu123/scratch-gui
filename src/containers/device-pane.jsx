@@ -13,7 +13,8 @@ import {setReceivedBlocks} from '../reducers/hovered-target';
 import {showStandardAlert, closeAlertWithId} from '../reducers/alerts';
 import {setRestore} from '../reducers/restore-deletion';
 import DragConstants from '../lib/drag-constants';
-import TargetPaneComponent from '../components/target-pane/target-pane.jsx';
+import DeviceSelectorComponent from '../components/device-selector/device-selector.jsx';
+
 import spriteLibraryContent from '../lib/libraries/sprites.json';
 import {handleFileUpload, spriteUpload} from '../lib/file-uploader.js';
 import sharedMessages from '../lib/shared-messages';
@@ -24,7 +25,7 @@ import randomizeSpritePosition from '../lib/randomize-sprite-position';
 import downloadBlob from '../lib/download-blob';
 
 
-class TargetPane extends React.Component {
+class DevicePane extends React.Component {
     constructor (props) {
         super(props);
         bindAll(this, [
@@ -42,7 +43,7 @@ class TargetPane extends React.Component {
             'handleDuplicateSprite',
             'handleExportSprite',
             'handleNewSprite',
-            'handleSelectSprite',
+            'handleSelectDevice',
             'handleSurpriseSpriteClick',
             'handlePaintSpriteClick',
             'handleFileUploadClick',
@@ -99,9 +100,9 @@ class TargetPane extends React.Component {
             downloadBlob(`${spriteName}.sprite3`, content);
         });
     }
-    handleSelectSprite (id) {
+    handleSelectDevice (id) {
 
-        console.log("handleSelectSprite");
+        console.log("handleSelectDevice");
 
         this.props.vm.setEditingTarget(id);
         if (this.props.stage && id !== this.props.stage.id) {
@@ -220,11 +221,18 @@ class TargetPane extends React.Component {
             dispatchUpdateRestore, // eslint-disable-line no-unused-vars
             onShowImporting, // eslint-disable-line no-unused-vars
             onCloseImporting, // eslint-disable-line no-unused-vars
+            raiseSprites,
+            spriteLibraryVisible,
+            onNewSpriteClick,
+            onRequestCloseSpriteLibrary,
+            
             ...componentProps
         } = this.props;
+
         return (
-            <TargetPaneComponent
+            <DeviceSelectorComponent
                 {...componentProps}
+                selectedId={this.props.editingTarget}
                 fileInputRef={this.setFileInput}
                 onActivateBlocksTab={this.handleActivateBlocksTab}
                 onChangeSpriteDirection={this.handleChangeSpriteDirection}
@@ -240,31 +248,25 @@ class TargetPane extends React.Component {
                 onExportSprite={this.handleExportSprite}
                 onFileUploadClick={this.handleFileUploadClick}
                 onPaintSpriteClick={this.handlePaintSpriteClick}
-                onSelectSprite={this.handleSelectSprite}
+                onSelectSprite={this.handleSelectDevice}
                 onSpriteUpload={this.handleSpriteUpload}
                 onSurpriseSpriteClick={this.handleSurpriseSpriteClick}
+                raised={raiseSprites}
             />
         );
     }
 }
 
-const {
-    onSelectSprite, // eslint-disable-line no-unused-vars
-    onActivateBlocksTab, // eslint-disable-line no-unused-vars
-    ...targetPaneProps
-} = TargetPaneComponent.propTypes;
-
-TargetPane.propTypes = {
+DevicePane.propTypes = {
     intl: intlShape.isRequired,
     onCloseImporting: PropTypes.func,
-    onShowImporting: PropTypes.func,
-    ...targetPaneProps
+    onShowImporting: PropTypes.func
 };
 
 const mapStateToProps = state => ({
     editingTarget: state.scratchGui.targets.editingTarget,
     hoveredTarget: state.scratchGui.hoveredTarget,
-    sprites: state.scratchGui.targets.sprites,
+    devices: state.scratchGui.targets.devices,
     stage: state.scratchGui.targets.stage,
     raiseSprites: state.scratchGui.blockDrag,
     spriteLibraryVisible: state.scratchGui.modals.spriteLibrary
@@ -297,4 +299,4 @@ const mapDispatchToProps = dispatch => ({
 export default injectIntl(connect(
     mapStateToProps,
     mapDispatchToProps
-)(TargetPane));
+)(DevicePane));

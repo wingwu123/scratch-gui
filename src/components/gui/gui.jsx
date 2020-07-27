@@ -18,6 +18,7 @@ import {withSize} from 'react-sizeme';
 
 import Blocks from '../../containers/blocks.jsx';
 import CostumeTab from '../../containers/costume-tab.jsx';
+import DevicePane from '../../containers/device-pane.jsx';
 import TargetPane from '../../containers/target-pane.jsx';
 import StagePane from '../../containers/stage-pane.jsx';
 import SoundTab from '../../containers/sound-tab.jsx';
@@ -42,6 +43,7 @@ import layout, { STAGE_SIZE_MODES } from '../../lib/layout-constants';
 import { resolveStageSize } from '../../lib/screen-utils';
 
 import styles from './gui.css';
+import targetStyles from './target-tab-styles.css';
 import addExtensionIcon from './icon--extensions.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
@@ -187,6 +189,11 @@ class GUIComponent extends React.Component {
             tabPanel: classNames(tabStyles.reactTabsTabPanel, styles.tabPanel),
             tabPanelSelected: classNames(tabStyles.reactTabsTabPanelSelected, styles.isSelected),
             tabSelected: classNames(tabStyles.reactTabsTabSelected, styles.isSelected)
+        };
+
+        const targetTabClassNames = {
+            tab: classNames(tabStyles.reactTabsTab, targetStyles.tab),
+            tabList: classNames(tabStyles.reactTabsTabList, targetStyles.tabList)
         };
 
         if (isRendererSupported === null) {
@@ -419,9 +426,9 @@ class GUIComponent extends React.Component {
                                                 return true;
                                             }}
                                         >
-                                            <TabList className={tabClassNames.tabList}>
+                                            <TabList className={targetTabClassNames.tabList}>
                                                 <Tab
-                                                    className={tabClassNames.tab}
+                                                    className={targetTabClassNames.tab}
                                                 >
                                                     <img
                                                         draggable={false}
@@ -434,7 +441,7 @@ class GUIComponent extends React.Component {
                                                     />
                                                 </Tab>
                                                 <Tab
-                                                    className={tabClassNames.tab}
+                                                    className={targetTabClassNames.tab}
                                                 >
                                                     <img
                                                         draggable={false}
@@ -449,7 +456,7 @@ class GUIComponent extends React.Component {
                                                 {
                                                     stage.id ? (
                                                         <Tab
-                                                            className={tabClassNames.tab}
+                                                            className={targetTabClassNames.tab}
                                                         >
                                                             <img
                                                                 draggable={false}
@@ -468,7 +475,7 @@ class GUIComponent extends React.Component {
                                             </TabList>
 
                                             <TabPanel className={tabClassNames.tabPanel}>
-                                                <TargetPane
+                                                <DevicePane
                                                     stageSize={stageSize}
                                                     vm={vm}
                                                 />

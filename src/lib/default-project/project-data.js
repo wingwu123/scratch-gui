@@ -30,7 +30,7 @@ const projectData = translateFunction => {
         targets: [
             {
                 isStage: true,
-                devType:"",
+                deviceType:"",
                 name: 'Stage',
                 variables: {
                     '`jEk@4|i[#Fk?(8x)AV.-my variable': [
@@ -67,8 +67,57 @@ const projectData = translateFunction => {
             },
             {
                 isStage: false,
-                devType:"",
+                deviceType:"",
                 name: translator(messages.sprite, {index: 1}),
+                variables: {},
+                lists: {},
+                broadcasts: {},
+                blocks: {},
+                currentCostume: 0,
+                costumes: [
+                    {
+                        assetId: 'b7853f557e4426412e64bb3da6531a99',
+                        name: translator(messages.costume, {index: 1}),
+                        bitmapResolution: 1,
+                        md5ext: 'b7853f557e4426412e64bb3da6531a99.svg',
+                        dataFormat: 'svg',
+                        rotationCenterX: 48,
+                        rotationCenterY: 50
+                    },
+                    {
+                        assetId: 'e6ddc55a6ddd9cc9d84fe0b4c21e016f',
+                        name: translator(messages.costume, {index: 2}),
+                        bitmapResolution: 1,
+                        md5ext: 'e6ddc55a6ddd9cc9d84fe0b4c21e016f.svg',
+                        dataFormat: 'svg',
+                        rotationCenterX: 46,
+                        rotationCenterY: 53
+                    }
+                ],
+                sounds: [
+                    {
+                        assetId: '83c36d806dc92327b9e7049a565c6bff',
+                        name: translator(messages.meow),
+                        dataFormat: 'wav',
+                        format: '',
+                        rate: 22050,
+                        sampleCount: 18688,
+                        md5ext: '83c36d806dc92327b9e7049a565c6bff.wav'
+                    }
+                ],
+                volume: 100,
+                visible: true,
+                x: 0,
+                y: 0,
+                size: 100,
+                direction: 90,
+                draggable: false,
+                rotationStyle: 'all around'
+            },
+            {
+                isStage: false,
+                deviceType:"deviceType-default",
+                name: "device-1", //translator(messages.sprite, {index: 1}),
                 variables: {},
                 lists: {},
                 broadcasts: {},

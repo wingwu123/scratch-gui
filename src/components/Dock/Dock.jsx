@@ -96,7 +96,7 @@ function getDockStyles(
         isResizing && styles.dockResizing
     ];
 
-    console.log("dock_style " + parentWidth + " " + size);
+    //console.log("dock_style " + parentWidth + " " + size);
 
     return dock_style;
 }

@@ -19,6 +19,8 @@ import 'codemirror/mode/lua/lua';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/theme/monokai.css';
 
+import ScratchBlocks from 'scratch-blocks';
+
 //import "codemirror/addon/fold/foldgutter.css";
 //import 'codemirror/addon/fold/foldgutter.js';
 //import 'codemirror/theme/eclipse.css';
@@ -53,22 +55,39 @@ class Dock extends React.Component {
             'showDock',
             'hideDock',
             'handleDockClose',
+            'handleRefreshCode'
         ]);
+
+        
+        let code = [
+            '#include <iostream>',
+            'using namespace std;',
+            'int main(int argc, char* argv[])',
+            '{',
+            '    cout << \"Hello, world! 1 \" << endl;',
+            '    cout << \"Hello, world! 2 \" << endl;',
+            '    cout << \"Hello, world! 3 \" << endl;',
+            '    cout << \"Hello, world! 4 \" << endl;',
+            '    cout << \"Hello, world! 5 \" << endl;',
+            '    cout << \"Hello, world! 6 \" << endl;',
+            '    cout << \"Hello, world! 7 \" << endl;',
+            '    cout << \"Hello, world! 8 \" << endl;',
+            '    cout << \"Hello, world! 9 \" << endl;',
+            '    cout << \"Hello, world! 10 \" << endl;',
+            '    return 0;',
+            '}'
+        ].join('\n');
 
         this.state = {
             dockReszieing: false,
             dockSize: 300,
             dockVisible: true,
             parentSize: { width: 100, height: 100 },
+            codecpp: code
         };
 
         this.oldDockSize = 300;
 
-        /*
-        this.state = {
-            size: props.size || props.defaultSize
-        };
-        */
     }
 
     componentDidMount() {
@@ -134,33 +153,25 @@ class Dock extends React.Component {
 
     }
 
+    handleRefreshCode() {
+        var workspace = ScratchBlocks.getMainWorkspace();
+        var generator = ScratchBlocks.Clang;
+
+        var code = generator.workspaceToCode(workspace);
+
+        this.setState({
+            codecpp: code
+        });
+
+        console.log("code", code);
+    }
+
     render() {
 
         const {
             code,
             ...componentProps
         } = this.props;
-
-
-        let codecpp = [
-            '#include <iostream>',
-            'using namespace std;',
-            'int main(int argc, char* argv[])',
-            '{',
-            '    cout << \"Hello, world! 1 \" << endl;',
-            '    cout << \"Hello, world! 2 \" << endl;',
-            '    cout << \"Hello, world! 3 \" << endl;',
-            '    cout << \"Hello, world! 4 \" << endl;',
-            '    cout << \"Hello, world! 5 \" << endl;',
-            '    cout << \"Hello, world! 6 \" << endl;',
-            '    cout << \"Hello, world! 7 \" << endl;',
-            '    cout << \"Hello, world! 8 \" << endl;',
-            '    cout << \"Hello, world! 9 \" << endl;',
-            '    cout << \"Hello, world! 10 \" << endl;',
-            '    return 0;',
-            '}'
-        ].join('\n');
-
 
         return (
 
@@ -173,10 +184,11 @@ class Dock extends React.Component {
             resizingCallback={(val) => { this.setState({ dockReszieing: val }); }}
             handleDockClose={this.handleDockClose}
             {...componentProps}>
+                <button onClick={this.handleRefreshCode} >Refresh code</button>
 
                 <div id={"code-editor"} style={{width:"100%",height:"100%"}} ref={(ref)=>{this.editorRef = ref;}} >
                     <CodeMirror
-                        value={codecpp}
+                        value={this.state.codecpp}
                         options={{
                             theme: 'monokai',
                             tabSize: 4,

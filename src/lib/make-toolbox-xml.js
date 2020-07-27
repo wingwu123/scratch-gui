@@ -138,6 +138,13 @@ const motion = function (isStage, targetId) {
     `;
 };
 
+/*
+            <value name="MOTOR_ID">
+                <shadow type="motion_motor_id_menu">
+                    <field name="MOTOR_ID">2</field>
+                </shadow>
+            </value>
+*/
 
 const device_motion = function (deviceType, targetId) {
 
@@ -145,6 +152,7 @@ const device_motion = function (deviceType, targetId) {
     <category name="%{BKY_CATEGORY_MOTION}" id="motion" colour="#4C97FF" secondaryColour="#3373CC">
         ${`
         <block type="motion_set_encoder_motor">
+
             <value name="POWER">
                 <shadow type="math_number">
                     <field name="NUM">30</field>

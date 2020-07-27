@@ -64,7 +64,6 @@
     "get-user-media-promise": "1.1.4",
     "gh-pages": "github:rschamp/gh-pages#publish-branch-to-subfolder",
     "html-webpack-plugin": "^3.2.0",
-    "immutable": "3.8.2",
     "intl": "1.2.5",
     "jest": "^21.0.0",
     "jest-junit": "^7.0.0",
@@ -146,6 +145,7 @@
   },
   "dependencies": {
     "@uiw/react-codemirror": "^2.2.1",
+    "immutable": "^3.8.1",
     "react-dock": "^0.2.4",
     "react-monaco-editor": "^0.39.0",
     "react-sizeme": "^2.6.12"

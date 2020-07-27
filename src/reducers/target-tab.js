@@ -16,6 +16,7 @@ const reducer = function (state, action) {
         return Object.assign({}, state, {
             activeTabIndex: action.activeTabIndex
         });
+        break;
     default:
         return state;
     }

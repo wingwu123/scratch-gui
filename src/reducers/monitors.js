@@ -6,8 +6,13 @@ const initialState = OrderedMap();
 const reducer = function (state, action) {
     if (typeof state === 'undefined') state = initialState;
     switch (action.type) {
-    case UPDATE_MONITORS:
+    case UPDATE_MONITORS:{
+
+        console.log("monitors ", typeof(action.monitors));
+        console.trace("--monitors--");
         return action.monitors;
+    }
+        
     default:
         return state;
     }
