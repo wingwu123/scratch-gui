@@ -1,5 +1,6 @@
 import PropTypes from 'prop-types';
 import React from 'react';
+import {connect} from 'react-redux';
 import {defineMessages, injectIntl, intlShape} from 'react-intl';
 
 import Box from '../box/box.jsx';
@@ -10,6 +11,12 @@ import {STAGE_DISPLAY_SIZES} from '../../lib/layout-constants';
 import {isRtl} from 'scratch-l10n';
 
 import styles from './device-selector.css';
+
+import DownloadModel from '../../containers/download-modal.jsx'
+
+import {
+    openDownloadModal
+} from '../../reducers/modals';
 
 
 const DeviceSelectorComponent = function (props) {
@@ -39,6 +46,10 @@ const DeviceSelectorComponent = function (props) {
         onChangeSpriteX,
         onChangeSpriteY,
         fileInputRef,
+        onDownloadClick,
+        onDownloadModelClose,
+        isDownloadVisible,
+        compiler,
 
         ...componentProps
     } = props;
@@ -54,30 +65,43 @@ const DeviceSelectorComponent = function (props) {
     return (
         <Box
             className={styles.spriteSelector}
+            direction={'column'}
             {...componentProps}
         >
-		
             <DeviceInfo
                 disabled={spriteInfoDisabled}
                 name={selectedDevice.name}
                 size={selectedDevice.size}
                 visible={selectedDevice.visible}
-                onChangeName={name => {}}
+                onChangeName={name => { }}
             />
 
-            <DeviceList
-                editingTarget={editingTarget}
-                hoveredTarget={hoveredTarget}
-                items={Object.keys(devices).map(id => devices[id])}
-                raised={raised}
-                selectedId={selectedId}
-                onDeleteSprite={onDeleteSprite}
-                onDrop={onDrop}
-                onDuplicateSprite={onDuplicateSprite}
-                onExportSprite={onExportSprite}
-                onSelectSprite={onSelectSprite}
-            />
-		
+            <Box className={styles.deviceBox}>
+                <Box>
+                    <DeviceList
+                        editingTarget={editingTarget}
+                        hoveredTarget={hoveredTarget}
+                        items={Object.keys(devices).map(id => devices[id])}
+                        raised={raised}
+                        selectedId={selectedId}
+                        onDeleteSprite={onDeleteSprite}
+                        onDrop={onDrop}
+                        onDuplicateSprite={onDuplicateSprite}
+                        onExportSprite={onExportSprite}
+                        onSelectSprite={onSelectSprite}
+                    />
+                </Box>
+                <Box className={styles.buttonColumn}>
+                    <button className={styles.downloadButton} onClick={onDownloadClick}>下载</button>
+                </Box>
+            </Box>
+
+            {
+                isDownloadVisible ?
+                    <DownloadModel compiler={compiler}></DownloadModel>
+                    : null
+            }
+
         </Box>
     );
 };
@@ -94,6 +118,7 @@ DeviceSelectorComponent.propTypes = {
     onDuplicateSprite: PropTypes.func,
     onExportSprite: PropTypes.func,
     onSelectSprite: PropTypes.func,
+    onDownloadClick: PropTypes.func,
     raised: PropTypes.bool,
     selectedId: PropTypes.string,
     devices: PropTypes.shape({
@@ -112,4 +137,16 @@ DeviceSelectorComponent.propTypes = {
     stageSize: PropTypes.oneOf(Object.keys(STAGE_DISPLAY_SIZES)).isRequired
 };
 
-export default injectIntl(DeviceSelectorComponent);
+const mapStateToProps = () => ({});
+
+const mapDispatchToProps = dispatch => ({
+    onDownloadClick: () => {
+        dispatch(openDownloadModal());
+    }
+});
+
+export default connect(
+    mapStateToProps,
+    mapDispatchToProps
+)(DeviceSelectorComponent);
+

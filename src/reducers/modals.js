@@ -12,6 +12,7 @@ const MODAL_SPRITE_LIBRARY = 'spriteLibrary';
 const MODAL_SOUND_RECORDER = 'soundRecorder';
 const MODAL_CONNECTION = 'connectionModal';
 const MODAL_TIPS_LIBRARY = 'tipsLibrary';
+const MODAL_DOWNLOAD = 'downloadModal';
 
 const initialState = {
     [MODAL_BACKDROP_LIBRARY]: false,
@@ -24,7 +25,8 @@ const initialState = {
     [MODAL_SPRITE_LIBRARY]: false,
     [MODAL_SOUND_RECORDER]: false,
     [MODAL_CONNECTION]: false,
-    [MODAL_TIPS_LIBRARY]: false
+    [MODAL_TIPS_LIBRARY]: false,
+    [MODAL_DOWNLOAD]: false
 };
 
 const reducer = function (state, action) {
@@ -60,6 +62,9 @@ const openBackdropLibrary = function () {
 const openCameraCapture = function () {
     return openModal(MODAL_CAMERA_CAPTURE);
 };
+const openDownloadModal = function () {
+    return openModal(MODAL_DOWNLOAD);
+};
 const openCostumeLibrary = function () {
     return openModal(MODAL_COSTUME_LIBRARY);
 };
@@ -93,6 +98,9 @@ const closeBackdropLibrary = function () {
 const closeCameraCapture = function () {
     return closeModal(MODAL_CAMERA_CAPTURE);
 };
+const closeDownloadModal = function () {
+    return closeModal(MODAL_DOWNLOAD);
+};
 const closeCostumeLibrary = function () {
     return closeModal(MODAL_COSTUME_LIBRARY);
 };
@@ -125,6 +133,7 @@ export {
     initialState as modalsInitialState,
     openBackdropLibrary,
     openCameraCapture,
+    openDownloadModal,
     openCostumeLibrary,
     openExtensionLibrary,
     openLoadingProject,
@@ -136,6 +145,7 @@ export {
     openConnectionModal,
     closeBackdropLibrary,
     closeCameraCapture,
+    closeDownloadModal,
     closeCostumeLibrary,
     closeExtensionLibrary,
     closeLoadingProject,

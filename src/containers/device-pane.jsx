@@ -25,6 +25,7 @@ import randomizeSpritePosition from '../lib/randomize-sprite-position';
 import downloadBlob from '../lib/download-blob';
 
 
+
 class DevicePane extends React.Component {
     constructor (props) {
         super(props);
@@ -50,6 +51,7 @@ class DevicePane extends React.Component {
             'handleSpriteUpload',
             'setFileInput'
         ]);
+
     }
     componentDidMount () {
         this.props.vm.addListener('BLOCK_DRAG_END', this.handleBlockDragEnd);
@@ -213,6 +215,7 @@ class DevicePane extends React.Component {
             }
         }
     }
+
     render () {
         const {
             onActivateTab, // eslint-disable-line no-unused-vars
@@ -252,6 +255,7 @@ class DevicePane extends React.Component {
                 onSpriteUpload={this.handleSpriteUpload}
                 onSurpriseSpriteClick={this.handleSurpriseSpriteClick}
                 raised={raiseSprites}
+                isDownloadVisible={this.props.isDownloadVisible}
             />
         );
     }
@@ -269,7 +273,8 @@ const mapStateToProps = state => ({
     devices: state.scratchGui.targets.devices,
     stage: state.scratchGui.targets.stage,
     raiseSprites: state.scratchGui.blockDrag,
-    spriteLibraryVisible: state.scratchGui.modals.spriteLibrary
+    spriteLibraryVisible: state.scratchGui.modals.spriteLibrary,
+    isDownloadVisible:state.scratchGui.modals.downloadModal
 });
 
 const mapDispatchToProps = dispatch => ({

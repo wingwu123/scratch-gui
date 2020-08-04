@@ -6,7 +6,7 @@ var webpack = require('webpack');
 var CopyWebpackPlugin = require('copy-webpack-plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var UglifyJsPlugin = require('uglifyjs-webpack-plugin');
-// var MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
+const MonacoWebpackPlugin = require("monaco-editor-webpack-plugin");
 
 // PostCss
 var autoprefixer = require('autoprefixer');
@@ -14,7 +14,34 @@ var postcssVars = require('postcss-simple-vars');
 var postcssImport = require('postcss-import');
 
 const STATIC_PATH = process.env.STATIC_PATH || '/static';
-const CODEMIRROR_PATH = path.resolve(__dirname, "./node_modules/codemirror");
+const CODEMIRROR_PATH = ["\\node_modules\\codemirror", "\\node_modules\\react-sweet-progress"];
+
+const MONACO_EDITOR_PATH = '\\node_modules\\monaco-editor';
+
+console.log('CODEMIRROR_PATH', CODEMIRROR_PATH);
+console.log('MONACO_EDITOR_PATH', MONACO_EDITOR_PATH);
+
+function special_css(resource){
+    for (let index = 0; index < CODEMIRROR_PATH.length; index++) {
+        let ret = resource.indexOf(CODEMIRROR_PATH[index]);
+        if(ret != -1)
+        {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function monaco_editor(resource) {
+
+    let ret = resource.indexOf(MONACO_EDITOR_PATH);
+    if (ret != -1) {
+        return true;
+    }
+
+    return false;
+}
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
@@ -61,13 +88,45 @@ const base = {
             }
         },
         {
-            test: /\.css$/,
-            include: [CODEMIRROR_PATH],
+            resource: {
+                test: /\.css$/,
+                and:[(content) => {
+
+                    let ret = monaco_editor(content);
+
+                    if(ret)
+                    {
+                        console.log("\n resource ", content);
+                    }
+                    return ret;
+                }]
+            },
+            use: ["style-loader", "css-loader"],
+        },
+        {
+            resource: {
+                test: /\.css$/,
+                and:[(content) => {
+
+                    let ret = special_css(content);
+
+                    if(ret)
+                    {
+                        console.log("\n resource ", content);
+                    }
+                    return ret;
+                }]
+            },
+            //test: /\.css$/,
+            //include: CODEMIRROR_PATH,
             use: [
                 {
                     loader: "style-loader"
                 }, {
-                    loader: "css-loader"
+                    loader: "css-loader",
+                    options:{
+                        localIdentName: '[name]'
+                    }
                 }, {
                     loader: 'postcss-loader',
                     options:{
@@ -77,8 +136,19 @@ const base = {
                 }]
         },
         {
-            test: /\.css$/,
-            exclude:[CODEMIRROR_PATH],
+            resource: {
+                test: /\.css$/,
+                and:[(content) => {
+
+                    let ret = !special_css(content);
+                    let monaco_ret = !monaco_editor(content);
+
+                    return ret && monaco_ret;
+                }]
+            },
+
+            //test: /\.css$/,
+            //exclude:CODEMIRROR_PATH,
             use: [{
                 loader: 'style-loader'
             }, {
@@ -104,10 +174,16 @@ const base = {
             }]
         },
         {
-            // resource: path.resolve(__dirname, 'node_modules/monaco-editor/esm/vs/base/browser/ui/codiconLabel/codicon/codicon.ttf') ,
-            // use: {
-            //     loader: "file-loader"
-            // }
+            resource: {
+                test: /\.ttf$/,
+                and:[(content) => {
+                    let ret = monaco_editor(content);
+                    return ret;
+                }]
+            } ,
+            use: {
+                loader: "file-loader"
+            }
         }]
     },
     optimization: {
@@ -118,9 +194,10 @@ const base = {
         ]
     },
     plugins: [
-        // new MonacoWebpackPlugin({
-		// 	languages: ["typescript", "javascript", "css","cpp"],
-		// })
+        
+         new MonacoWebpackPlugin({
+		 	languages: ["typescript", "javascript", "css","cpp"],
+		 })
     ]
 };
 

@@ -49,17 +49,6 @@ import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
 
-import CodeMirror from '@uiw/react-codemirror';
-import 'codemirror/addon/display/autorefresh';
-import 'codemirror/addon/comment/comment';
-import 'codemirror/addon/edit/matchbrackets';
-import 'codemirror/keymap/sublime';
-import 'codemirror/lib/codemirror';
-import 'codemirror/mode/clike/clike';
-import 'codemirror/mode/lua/lua';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/theme/monokai.css';
-
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',
@@ -175,6 +164,7 @@ class GUIComponent extends React.Component {
             targetIsStage,
             telemetryModalVisible,
             tipsLibraryVisible,
+            compiler,
             vm,
             ...componentProps
         } = omit(this.props, 'dispatch');
@@ -297,6 +287,7 @@ class GUIComponent extends React.Component {
                             onShare={onShare}
                             onToggleLoginOpen={onToggleLoginOpen}
                         />
+
                         <Box className={styles.bodyWrapper}>
                             <Box className={styles.flexWrapper}>
                                 <Box className={styles.editorWrapper}>
@@ -388,9 +379,10 @@ class GUIComponent extends React.Component {
                                             <Box className={styles.watermark}>
                                                 <Watermark />
                                             </Box>
-                                            <Dock ref={(ref)=>{this.dockRef = ref;}}
+                                            <Dock ref={(ref)=>{this.dockRef = ref;}} 
                                             >
                                             </Dock>
+                                            
                                         </TabPanel>
                                         <TabPanel className={tabClassNames.tabPanel}>
                                             {costumesTabVisible ? <CostumeTab vm={vm} /> : null}
@@ -478,6 +470,7 @@ class GUIComponent extends React.Component {
                                                 <DevicePane
                                                     stageSize={stageSize}
                                                     vm={vm}
+                                                    compiler = {compiler}
                                                 />
                                             </TabPanel>
                                             <TabPanel className={tabClassNames.tabPanel}>
@@ -506,6 +499,7 @@ class GUIComponent extends React.Component {
                                 </Box>
                             </Box>
                         </Box>
+                        
                         <DragLayer />
                     </Box>
                 );
