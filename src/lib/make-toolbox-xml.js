@@ -515,6 +515,16 @@ const events = function (isStage) {
     `;
 };
 
+
+const device_events = function (deviceType, targetId) {
+    return `
+    <category name="%{BKY_CATEGORY_EVENTS}" id="events" colour="#FFD500" secondaryColour="#CC9900">
+        <block type="event_when_wobot_started"/>
+        ${categorySeparator}
+    </category>
+    `;
+};
+
 const control = function (isStage) {
     return `
     <category name="%{BKY_CATEGORY_CONTROL}" id="control" colour="#FFAB19" secondaryColour="#CF8B17">
@@ -557,6 +567,37 @@ const control = function (isStage) {
             </block>
             <block type="control_delete_this_clone"/>
         `}
+        ${categorySeparator}
+    </category>
+    `;
+};
+
+
+const device_control = function (deviceType, targetId) {
+    return `
+    <category name="%{BKY_CATEGORY_CONTROL}" id="control" colour="#FFAB19" secondaryColour="#CF8B17">
+        <block type="control_wait">
+            <value name="DURATION">
+                <shadow type="math_positive_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+        </block>
+        ${blockSeparator}
+        <block type="control_repeat">
+            <value name="TIMES">
+                <shadow type="math_whole_number">
+                    <field name="NUM">10</field>
+                </shadow>
+            </value>
+        </block>
+        <block id="forever" type="control_forever"/>
+        ${blockSeparator}
+        <block type="control_if"/>
+        <block type="control_if_else"/>
+        <block id="wait_until" type="control_wait_until"/>
+        <block id="repeat_until" type="control_repeat_until"/>
+
         ${categorySeparator}
     </category>
     `;
@@ -854,6 +895,146 @@ const operators = function () {
     `;
 };
 
+
+const  device_operators = function (deviceType, targetId) {
+
+    return `
+    <category name="%{BKY_CATEGORY_OPERATORS}" id="operators" colour="#40BF4A" secondaryColour="#389438">
+        <block type="operator_add">
+            <value name="NUM1">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+            <value name="NUM2">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+        </block>
+        <block type="operator_subtract">
+            <value name="NUM1">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+            <value name="NUM2">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+        </block>
+        <block type="operator_multiply">
+            <value name="NUM1">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+            <value name="NUM2">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+        </block>
+        <block type="operator_divide">
+            <value name="NUM1">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+            <value name="NUM2">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+        </block>
+        ${blockSeparator}
+        <block type="operator_random">
+            <value name="FROM">
+                <shadow type="math_number">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+            <value name="TO">
+                <shadow type="math_number">
+                    <field name="NUM">10</field>
+                </shadow>
+            </value>
+        </block>
+        ${blockSeparator}
+        <block type="operator_gt">
+            <value name="OPERAND1">
+                <shadow type="text">
+                    <field name="TEXT"/>
+                </shadow>
+            </value>
+            <value name="OPERAND2">
+                <shadow type="text">
+                    <field name="TEXT">50</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="operator_lt">
+            <value name="OPERAND1">
+                <shadow type="text">
+                    <field name="TEXT"/>
+                </shadow>
+            </value>
+            <value name="OPERAND2">
+                <shadow type="text">
+                    <field name="TEXT">50</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="operator_equals">
+            <value name="OPERAND1">
+                <shadow type="text">
+                    <field name="TEXT"/>
+                </shadow>
+            </value>
+            <value name="OPERAND2">
+                <shadow type="text">
+                    <field name="TEXT">50</field>
+                </shadow>
+            </value>
+        </block>
+        ${blockSeparator}
+        <block type="operator_and"/>
+        <block type="operator_or"/>
+        <block type="operator_not"/>
+        ${blockSeparator}
+        <block type="operator_mod">
+            <value name="NUM1">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+            <value name="NUM2">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+        </block>
+        <block type="operator_round">
+            <value name="NUM">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+        </block>
+        ${blockSeparator}
+        <block type="operator_mathop">
+            <value name="NUM">
+                <shadow type="math_number">
+                    <field name="NUM"/>
+                </shadow>
+            </value>
+        </block>
+        ${categorySeparator}
+    </category>
+    `;
+};
+
 const variables = function () {
     return `
     <category
@@ -941,11 +1122,24 @@ const makeToolboxXML = function (isStage, targetId, categoriesXML = [],
         everything = everything.concat([looksXML, gap]);
     }
 
-    const eventsXML = moveCategory('event') || events(isStage, targetId);
-    everything = everything.concat([eventsXML, gap]);
+    if(deviceType == ''){
+        const eventsXML = moveCategory('event') || events(isStage, targetId);
+        everything = everything.concat([eventsXML, gap]);
+    }
+    else{
+        const eventsXML = device_events(deviceType, targetId);
+        everything = everything.concat([eventsXML, gap]);
+    }
+    
 
-    const controlXML = moveCategory('control') || control(isStage, targetId);
-    everything = everything.concat([controlXML, gap]);
+    if(deviceType == ''){
+        const controlXML = moveCategory('control') || control(isStage, targetId);
+        everything = everything.concat([controlXML, gap]);
+    }
+    else{
+        const controlXML = device_control(deviceType, targetId);
+        everything = everything.concat([controlXML, gap]);
+    }
 
     if(deviceType == '')
     {
@@ -958,8 +1152,13 @@ const makeToolboxXML = function (isStage, targetId, categoriesXML = [],
         everything = everything.concat([sensingXML, gap]);
     }
 
-    const operatorsXML = moveCategory('operators') || operators(isStage, targetId);
-    everything = everything.concat([operatorsXML, gap]);
+    if (deviceType == '') {
+        const operatorsXML = moveCategory('operators') || operators(isStage, targetId);
+        everything = everything.concat([operatorsXML, gap]);
+    } else {
+        const operatorsXML = device_operators(isStage, targetId);
+        everything = everything.concat([operatorsXML, gap]);
+    }
 
     const variablesXML = moveCategory('data') || variables(isStage, targetId);
     everything = everything.concat([variablesXML, gap]);

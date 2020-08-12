@@ -10,6 +10,11 @@ import ModalComponent from '../components/download-modal/download-modal.jsx';
 
 import ScratchBlocks from 'scratch-blocks';
 
+import {
+    BLOCK_EDITOR,
+    CODE_EDITOR
+} from '../reducers/editor-type';
+
 
 import {
     closeDownloadModal
@@ -112,14 +117,28 @@ class DownloadModal extends React.Component {
         }
 
         this.setProgress(40);
-        let p = new Promise((resolve, reject) => {
-            this.addMessage('开始生成代码...');
-            var workspace = ScratchBlocks.getMainWorkspace();
-            var generator = ScratchBlocks.Clang;
-            var code = generator.workspaceToCode(workspace);
-            resolve(code);
-        });
-        p.then(next);
+
+        if(this.props.editor == BLOCK_EDITOR){
+
+            let p = new Promise((resolve, reject) => {
+                this.addMessage('开始生成代码...');
+                var workspace = ScratchBlocks.getMainWorkspace();
+                var generator = ScratchBlocks.Clang;
+                var code = generator.workspaceToCode(workspace);
+                resolve(code);
+            });
+            p.then(next);
+        }
+        else{
+
+            let p = new Promise((resolve, reject) => {
+                this.addMessage('开始生成代码...');
+
+                resolve(this.props.code);
+            });
+            p.then(next);
+        }
+
     }
 
     handleConnect(next) {
@@ -224,7 +243,10 @@ DownloadModal.propTypes = {
     onNewCostume: PropTypes.func
 };
 
-const mapStateToProps = () => ({});
+const mapStateToProps = (state) => ({
+    editor: state.scratchGui.editorType.editor,
+    code: state.scratchGui.editorType.code,
+});
 
 const mapDispatchToProps = dispatch => ({
     onClose: () => {

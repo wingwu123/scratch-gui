@@ -323,3 +323,21 @@ $fade-out-distance: 15px;
 .dock-content{
     display: flex;
 }
+
+.editor-item-wrapper-hidden {
+    z-index: -1;
+}
+
+.editor-item-wrapper {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+}
+
+.code-editor-wrapper {
+
+    width: 100%;
+    height: 100%;
+    border: solid 1px rgba(200, 200, 200, 1.0);
+    border-radius: 0.5rem;
+}

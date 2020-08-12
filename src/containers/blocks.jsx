@@ -99,6 +99,10 @@ class Blocks extends React.Component {
         );
         this.workspace = this.ScratchBlocks.inject(this.blocks, workspaceConfig);
 
+        let {editingTarget: target} = this.props.vm;
+
+        this.workspace.setlistVarVisible(!(target && target.deviceType != ''));
+
         // Register buttons under new callback keys for creating variables,
         // lists, and procedures from extensions.
 
@@ -110,8 +114,12 @@ class Blocks extends React.Component {
             this.ScratchBlocks.Procedures.createProcedureDefCallback_(this.workspace);
         };
 
+        
+
         toolboxWorkspace.registerButtonCallback('MAKE_A_VARIABLE', varListButtonCallback(''));
+
         toolboxWorkspace.registerButtonCallback('MAKE_A_LIST', varListButtonCallback('list'));
+
         toolboxWorkspace.registerButtonCallback('MAKE_A_PROCEDURE', procButtonCallback);
 
         // Store the xml of the toolbox that is actually rendered.
@@ -162,6 +170,8 @@ class Blocks extends React.Component {
         if (this.props.isVisible && this.props.toolboxXML !== this._renderedToolboxXML) {
             this.requestToolboxUpdate();
         }
+
+        
 
         if (this.props.isVisible === prevProps.isVisible) {
             if (this.props.stageSize !== prevProps.stageSize) {
@@ -359,7 +369,13 @@ class Blocks extends React.Component {
     onWorkspaceUpdate (data) {
         // When we change sprites, update the toolbox to have the new sprite's blocks
         const toolboxXML = this.getToolboxXML();
-        //console.log("onWorkspaceUpdate toolboxXML " + toolboxXML);
+        
+        console.log("onWorkspaceUpdate toolboxXML ");
+
+        if(this.props.isVisible){
+            console.log("onWorkspaceUpdate setlistVarVisible ");
+            this.workspace.setlistVarVisible(!( this.props.vm.editingTarget && this.props.vm.editingTarget.deviceType != ''));
+        }
 
         if (toolboxXML) {
             this.props.updateToolboxState(toolboxXML);

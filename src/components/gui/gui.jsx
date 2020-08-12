@@ -49,6 +49,16 @@ import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
 
+import EditorSelector from '../editor-selector/editor-selector.jsx'
+import MonacoEditor from "react-monaco-editor";
+
+import {
+    editorTypeSelect,
+    codeChanged,
+    BLOCK_EDITOR,
+    CODE_EDITOR
+} from '../../reducers/editor-type';
+
 const messages = defineMessages({
     addExtension: {
         id: 'gui.gui.addExtension',
@@ -69,6 +79,7 @@ class GUIComponent extends React.Component {
             'handleResize'
             ,'handleMouseMove'
         ]);
+
     }
 
     handleResize(event) {
@@ -166,6 +177,10 @@ class GUIComponent extends React.Component {
             tipsLibraryVisible,
             compiler,
             vm,
+            onEditorSelected,
+            onCodeChanged,
+            editor,
+
             ...componentProps
         } = omit(this.props, 'dispatch');
         if (children) {
@@ -189,6 +204,28 @@ class GUIComponent extends React.Component {
         if (isRendererSupported === null) {
             isRendererSupported = Renderer.isSupported();
         }
+
+        const codeEditorOptions = {
+            selectOnLineNumbers: true,
+            roundedSelection: false,
+            //readOnly: true,
+            fontSize:16,
+            cursorStyle: "line",
+            automaticLayout: true,
+            //minimap:{enabled:false},
+            //scrollbar:{horizontal:2, vertical:2}
+          };
+
+        let blockEditor = (this.props.editor == BLOCK_EDITOR);
+
+        let defaultCode = ['#include "whalesbot.h"',
+        'void setup() {',
+        '  board_init();',
+        '}',
+        '',
+        'void _setup(){',
+        '',
+        '}'].join('\n');
 
         return (<MediaQuery minWidth={layout.fullSizeMinWidth}>{isFullSize => {
             const stageSize = resolveStageSize(stageSizeMode, isFullSize);
@@ -348,41 +385,59 @@ class GUIComponent extends React.Component {
                                                 />
                                             </Tab>
                                         </TabList>
-                                        <TabPanel className={tabClassNames.tabPanel} ref={(ref)=>{
-                                            
-                                            this.element = ref;}} onMouseMove={this.handleMouseMove} >
+                                        <TabPanel className={tabClassNames.tabPanel} ref={(ref) => {
+
+                                            this.element = ref;
+                                        }} onMouseMove={this.handleMouseMove} >
                                             <Box className={styles.blocksWrapper}>
-                                                <Blocks
-                                                    canUseCloud={canUseCloud}
-                                                    grow={1}
-                                                    isVisible={blocksTabVisible}
-                                                    options={{
-                                                        media: `${basePath}static/blocks-media/`
-                                                    }}
-                                                    stageSize={stageSize}
-                                                    vm={vm}
-                                                />
-                                            </Box>
-                                            <Box className={styles.extensionButtonContainer}>
-                                                <button
-                                                    className={styles.extensionButton}
-                                                    title={intl.formatMessage(messages.addExtension)}
-                                                    onClick={onExtensionButtonClick}
-                                                >
-                                                    <img
-                                                        className={styles.extensionButtonIcon}
-                                                        draggable={false}
-                                                        src={addExtensionIcon}
+                                                <EditorSelector editor={editor} onSelected={onEditorSelected} />
+
+                                                <Box className={classNames(styles.editorItemWrapper, blockEditor ? null : styles.editorItemWrapperHidden)}>
+                                                    <Blocks
+                                                        canUseCloud={canUseCloud}
+                                                        grow={1}
+                                                        isVisible={blocksTabVisible}
+                                                        options={{
+                                                            media: `${basePath}static/blocks-media/`
+                                                        }}
+                                                        stageSize={stageSize}
+                                                        vm={vm}
                                                     />
-                                                </button>
+                                                    <Box className={styles.extensionButtonContainer}>
+                                                        <button
+                                                            className={styles.extensionButton}
+                                                            title={intl.formatMessage(messages.addExtension)}
+                                                            onClick={onExtensionButtonClick}
+                                                        >
+                                                            <img
+                                                                className={styles.extensionButtonIcon}
+                                                                draggable={false}
+                                                                src={addExtensionIcon}
+                                                            />
+                                                        </button>
+                                                    </Box>
+                                                    <Box className={styles.watermark}>
+                                                        <Watermark />
+                                                    </Box>
+                                                    <Dock ref={(ref) => { this.dockRef = ref; }} vm={vm}
+                                                    >
+                                                    </Dock>
+                                                </Box>
+                                                <Box className={classNames(styles.editorItemWrapper, blockEditor ? styles.editorItemWrapperHidden : null)}>
+                                                    <Box className={styles.codeEditorWrapper}>
+                                                        <MonacoEditor
+                                                            language="cpp"
+                                                            value={defaultCode}
+                                                            options={codeEditorOptions}
+                                                            theme={'vs-light'}
+                                                            onChange={onCodeChanged}
+                                                        />
+                                                    </Box>
+
+                                                </Box>
                                             </Box>
-                                            <Box className={styles.watermark}>
-                                                <Watermark />
-                                            </Box>
-                                            <Dock ref={(ref)=>{this.dockRef = ref;}} 
-                                            >
-                                            </Dock>
-                                            
+
+
                                         </TabPanel>
                                         <TabPanel className={tabClassNames.tabPanel}>
                                             {costumesTabVisible ? <CostumeTab vm={vm} /> : null}
@@ -595,9 +650,16 @@ const mapStateToProps = state => ({
     // This is the button's mode, as opposed to the actual current state
     stageSizeMode: state.scratchGui.stageSize.stageSize,
     stage: state.scratchGui.targets.stage,
-    editingTarget: state.scratchGui.targets.editingTarget
+    editingTarget: state.scratchGui.targets.editingTarget,
+    editor: state.scratchGui.editorType.editor
+});
+
+const mapDispatchToProps = dispatch => ({
+    onEditorSelected: (editor) => dispatch(editorTypeSelect(editor)),
+    onCodeChanged: (code) => dispatch(codeChanged(code)),
 });
 
 export default injectIntl(connect(
-    mapStateToProps
+    mapStateToProps,
+    mapDispatchToProps,
 )(GUIComponent));

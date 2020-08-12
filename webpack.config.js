@@ -45,7 +45,7 @@ function monaco_editor(resource) {
 
 const base = {
     mode: process.env.NODE_ENV === 'production' ? 'production' : 'development',
-    devtool: 'cheap-module-source-map',
+    
     devServer: {
         contentBase: path.resolve(__dirname, 'build'),
         host: '0.0.0.0',
@@ -93,11 +93,6 @@ const base = {
                 and:[(content) => {
 
                     let ret = monaco_editor(content);
-
-                    if(ret)
-                    {
-                        console.log("\n resource ", content);
-                    }
                     return ret;
                 }]
             },
@@ -109,11 +104,6 @@ const base = {
                 and:[(content) => {
 
                     let ret = special_css(content);
-
-                    if(ret)
-                    {
-                        console.log("\n resource ", content);
-                    }
                     return ret;
                 }]
             },
@@ -188,9 +178,11 @@ const base = {
     },
     optimization: {
         minimizer: [
+            /*
             new UglifyJsPlugin({
                 include: /\.min\.js$/
             })
+            */
         ]
     },
     plugins: [
@@ -211,6 +203,7 @@ module.exports = [
             'compatibilitytesting': './src/playground/compatibility-testing.jsx',
             'player': './src/playground/player.jsx'
         },
+        devtool: 'cheap-module-source-map',
         output: {
             path: path.resolve(__dirname, 'build'),
             filename: '[name].js'

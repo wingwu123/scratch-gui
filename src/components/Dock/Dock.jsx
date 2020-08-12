@@ -15,14 +15,19 @@ const styles = {
 
     dock: {
         position: 'absolute',
-        zIndex: 1,
-        boxShadow: '0 0 4px rgba(0, 0, 0, 0.3)',
-        background: 'rgba(255, 230, 230, 0.4)',
+        zIndex: 200,        
+        background: 'rgba(255, 255, 255, 1.0)',
         left: 0,
         top: 0,
         width: '100%',
         height: '100%',
-        display: 'inline-block'
+        display: 'inline-block',
+        borderTopRightRadius: '0.5rem',
+        borderBottomRightRadius: '0.5rem',
+    },
+
+    dockBorder: {
+        border: 'solid 1px rgba(200, 200, 200, 1.0)',
     },
 
     dockHidden: {
@@ -35,7 +40,9 @@ const styles = {
 
     dockContentWarpper: {
         width: '100%',
-        height: '100%'
+        height: '100%',
+        position: 'absolute',
+        display: 'flex',
     },
 
     dockContent: {
@@ -47,6 +54,7 @@ const styles = {
 
     resizer: {
         display: 'inline-block',
+        border: 'none',
         zIndex: 2,
         opacity: 0
     },
@@ -65,6 +73,7 @@ const styles = {
         //-webkit-justify-content: center,
         //-ms-flex-pack: center,
         justifyContent: 'center',
+        userSelect: 'none',
         paddingLeft: '0.2rem',
         zIndex: '99',
         top: '94px',
@@ -74,6 +83,15 @@ const styles = {
         height: '24px',
         background: 'rgba(255, 163, 18, 1)',
         borderRadius: '80px 0px 0px 80px'
+    },
+
+    langHead: {
+        userSelect: 'none',
+        paddingLeft:'10px',
+        height: '30px',
+        lineHeight:'30px',
+        borderBottom: 'solid 1px rgba(200, 200, 200, 1.0)',
+        color:'rgba(65, 105, 255, 1)'
     }
 };
 
@@ -93,6 +111,7 @@ function getDockStyles(
         styles.dock,
         dockStyle,
         posStyle,
+        isVisible && styles.dockBorder,
         isResizing && styles.dockResizing
     ];
 
@@ -101,7 +120,7 @@ function getDockStyles(
     return dock_style;
 }
 
-const resizer_width = 10;
+const resizer_width = 2;
 
 function getResizerStyles() {
     let resizerStyle;
@@ -191,6 +210,7 @@ class Dock extends React.Component {
                     <div style={resizerStyles}
                         onMouseDown={this.handleMouseDown} />
                     <div style={dockContent}>
+                        <div style = {styles.langHead}>C 代码</div>
                         { children }
                     </div>
                 </div>
