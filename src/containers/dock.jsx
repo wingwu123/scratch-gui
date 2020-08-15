@@ -21,7 +21,8 @@ class Dock extends React.Component {
             'showDock',
             'hideDock',
             'handleDockClose',
-            'handleRefreshCode'
+            'handleRefreshCode',
+            'setParentSize'
         ]);
 
         

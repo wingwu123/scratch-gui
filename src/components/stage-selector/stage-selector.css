@@ -18,16 +18,18 @@ $header-height: calc($stage-menu-height - 2px);
     border-color: $ui-black-transparent;
     border-width: 0px;
     border-style: solid;
-    cursor: pointer;
+    /*
+
+    border: 1px solid rgba(10, 255, 50, 1.0);
+    */
+    
     transition: all 0.25s ease;
+    height: 100%;
+
+    
 }
 
-.stage-selector.is-selected {
-    border-top-left-radius: .625rem;
-    border-top-right-radius: .625rem;
-    border-color: $motion-primary;
-    box-shadow: 0px 0px 0px 4px $motion-transparent;
-}
+
 
 .stage-selector:hover {
     border-color: $motion-primary;
@@ -58,12 +60,22 @@ $header-height: calc($stage-menu-height - 2px);
     transition: color 0.25s ease;
 }
 
-.stage-selector.is-selected .header {
-    background-color: $motion-primary;
+.content-wrapper {
+    position: absolute;
+    width: 100%;
+    top: $header-height;
+    bottom:0;
+    left: 0;
 }
 
-.stage-selector.is-selected .header-title {
-    color: $ui-white;
+.content {
+
+    position: absolute;
+    top: 25%;
+    left: 25%;
+    height: 50%;
+    width: 50%;
+    cursor: pointer;
 }
 
 .count {
@@ -71,6 +83,7 @@ $header-height: calc($stage-menu-height - 2px);
     font-size: 0.625rem;
     color: $text-primary;
     user-select: none;
+    text-align: center;
 }
 
 .label {
@@ -81,16 +94,30 @@ $header-height: calc($stage-menu-height - 2px);
     text-align: center;
 }
 
+.canvas-wrapper {
+    width: 100%;
+    height: 100%;
+}
+
 .costume-canvas {
     display: block;
-    margin-top: .25rem;
     width: 100%;
+    height: 100%;
+
     user-select: none;
     border: 1px solid $ui-black-transparent;
     border-radius: .25rem;
     box-shadow: inset 0 0 4px $ui-black-transparent;
-    max-width: 64px;
-    max-height: 48px;
+    min-width: 64px;
+    min-height: 48px;
+    object-fit: contain;
+}
+
+.costume-canvas.is-selected {
+    border-top-left-radius: .625rem;
+    border-top-right-radius: .625rem;
+    border-color: $motion-primary;
+    box-shadow: 0px 0px 0px 4px $motion-transparent;
 }
 
 

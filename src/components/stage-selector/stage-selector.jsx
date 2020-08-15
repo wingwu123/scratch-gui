@@ -61,14 +61,11 @@ const StageSelector = props => {
     return (
         <Box
             className={classNames(styles.stageSelector, {
-                [styles.isSelected]: selected,
                 [styles.raised]: raised || dragOver,
                 [styles.receivedBlocks]: receivedBlocks
             })}
             {...componentProps}
         >
-		
-		
             <div className={styles.header}>
                 <div className={styles.headerTitle}>
                     <FormattedMessage
@@ -78,12 +75,16 @@ const StageSelector = props => {
                     />
                 </div>
             </div>
-			<div className={styles.content}>
+            <div className={styles.contentWrapper}>
+			<div className={styles.content} onClick={onClick}>
 			{url ? (
+                <div className={styles.canvasWrapper}>
                 <img
-                    className={styles.costumeCanvas}
+                    className={classNames(styles.costumeCanvas,{[styles.isSelected]: selected})}
                     src={url}
                 />
+                </div>
+                
             ) : null}
             <div className={styles.label}>
                 <FormattedMessage
@@ -94,6 +95,8 @@ const StageSelector = props => {
             </div>
             <div className={styles.count}>{backdropCount}</div>
 			
+            
+			</div>
             <ActionMenu
                 className={styles.addButton}
                 img={backdropIcon}
@@ -125,7 +128,7 @@ const StageSelector = props => {
                 tooltipPlace={isRtl(intl.locale) ? 'right' : 'left'}
                 onClick={onNewBackdropClick}
             />
-			</div>
+            </div>
 			
             
         </Box>

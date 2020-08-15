@@ -42,6 +42,21 @@
     white-space: nowrap;
 }
 
+.tab:hover{
+    border-bottom: 4px solid hsl(208, 99%, 50%);
+    background-color: $ui-primary;
+}
+
+.tab:focus{
+    box-shadow: none;
+    border-color: $ui-black-transparent;
+}
+
+.tab:focus:after {
+
+    display: none;
+}
+
 .tab:first-child {
     border-radius: 5px 0 0 0;
 }
@@ -75,7 +90,7 @@
 }
 */
 
-/* Use z-indices to force left-on-top for tabs */
+/* Use z-indices to force left-on-top for tabs 
 .tab:nth-of-type(1) {
     z-index: 3;
 }
@@ -85,15 +100,12 @@
 .tab:nth-of-type(3) {
     z-index: 1;
 }
-
-.tab:hover {
-  background-color: $ui-primary;
-}
+*/
 
 .tab.is-selected {
     color: $motion-primary;
     background-color: $ui-white;
-    z-index: 4; /* Make sure selected is always above */
+    z-index: 2; /* Make sure selected is always above */
 }
 
 .tab.is-selected img {
@@ -106,9 +118,8 @@
 }
 
 .tab.is-selected:focus {
-    outline: none;
     box-shadow: none;
-    border-color: $ui-black-transparent;
+    border-color: hsl(208, 99%, 50%);
 }
 
 .tab.is-selected:focus:after {

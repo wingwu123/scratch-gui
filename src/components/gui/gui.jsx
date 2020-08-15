@@ -78,8 +78,29 @@ class GUIComponent extends React.Component {
         bindAll(this, [
             'handleResize'
             ,'handleMouseMove'
+            ,'handleCodeChanged'
+            ,'onProjectLoaded'
         ]);
 
+        let defaultCode = [
+        '#include "whalesbot.h"',
+        'void setup() {',
+        '  board_init();',
+        '}',
+        '',
+        'void _setup(){',
+        '',
+        '}'].join('\n');
+
+        this.state = {code:defaultCode};
+        this.handleCodeChanged(defaultCode);
+        console.log('handleCodeChanged ---- ');
+
+        console.log('GUI ---- ', '[' +this.props.vm.runtime.code+']');
+    }
+
+    handleCodeChanged(code) {
+        this.props.vm.runtime.code = code;
     }
 
     handleResize(event) {
@@ -103,8 +124,21 @@ class GUIComponent extends React.Component {
     componentDidMount() {
 
         let element = ReactDOM.findDOMNode(this.element);
+        DomSize.bind(element, this.handleResize);   
 
-        DomSize.bind(element, this.handleResize);        
+        this.props.vm.runtime.addListener('PROJECT_LOADED', this.onProjectLoaded);
+    }
+
+    componentWillUnmount () {
+        this.props.vm.runtime.removeListener('PROJECT_LOADED', this.onProjectLoaded);
+
+    }
+
+    onProjectLoaded () {
+        if (this.props.vm.runtime.code) {
+            
+            this.setState({code:this.props.vm.runtime.code});
+        }
     }
 
     render() {
@@ -198,7 +232,8 @@ class GUIComponent extends React.Component {
 
         const targetTabClassNames = {
             tab: classNames(tabStyles.reactTabsTab, targetStyles.tab),
-            tabList: classNames(tabStyles.reactTabsTabList, targetStyles.tabList)
+            tabList: classNames(tabStyles.reactTabsTabList, targetStyles.tabList),
+            tabSelected: classNames(targetStyles.tab, targetStyles.isSelected),
         };
 
         if (isRendererSupported === null) {
@@ -218,14 +253,7 @@ class GUIComponent extends React.Component {
 
         let blockEditor = (this.props.editor == BLOCK_EDITOR);
 
-        let defaultCode = ['#include "whalesbot.h"',
-        'void setup() {',
-        '  board_init();',
-        '}',
-        '',
-        'void _setup(){',
-        '',
-        '}'].join('\n');
+        
 
         return (<MediaQuery minWidth={layout.fullSizeMinWidth}>{isFullSize => {
             const stageSize = resolveStageSize(stageSizeMode, isFullSize);
@@ -396,7 +424,7 @@ class GUIComponent extends React.Component {
                                                     <Blocks
                                                         canUseCloud={canUseCloud}
                                                         grow={1}
-                                                        isVisible={blocksTabVisible}
+                                                        isVisible={blocksTabVisible && blockEditor}
                                                         options={{
                                                             media: `${basePath}static/blocks-media/`
                                                         }}
@@ -427,10 +455,10 @@ class GUIComponent extends React.Component {
                                                     <Box className={styles.codeEditorWrapper}>
                                                         <MonacoEditor
                                                             language="cpp"
-                                                            value={defaultCode}
+                                                            value={this.state.code}
                                                             options={codeEditorOptions}
                                                             theme={'vs-light'}
-                                                            onChange={onCodeChanged}
+                                                            onChange={this.handleCodeChanged}
                                                         />
                                                     </Box>
 
@@ -464,7 +492,7 @@ class GUIComponent extends React.Component {
                                             forceRenderTabPanel
                                             className={tabClassNames.tabs}
                                             selectedIndex={targetTabIndex}
-                                            selectedTabClassName={tabClassNames.tabSelected}
+                                            selectedTabClassName={targetTabClassNames.tabSelected}
                                             selectedTabPanelClassName={tabClassNames.tabPanelSelected}
                                             onSelect={tab => {
 
@@ -634,8 +662,8 @@ GUIComponent.defaultProps = {
     canEditTitle: false,
     canManageFiles: true,
     canRemix: false,
-    canSave: false,
-    canCreateCopy: false,
+    canSave: true,
+    canCreateCopy: true,
     canShare: false,
     canUseCloud: false,
     enableCommunity: false,

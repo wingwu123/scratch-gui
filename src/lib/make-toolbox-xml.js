@@ -154,67 +154,67 @@ const device_motion = function (deviceType, targetId) {
         <block type="motion_set_encoder_motor">
 
             <value name="POWER">
-                <shadow type="math_number">
+                <shadow type="math_decimal_m100_p100">
                     <field name="NUM">30</field>
                 </shadow>
             </value>
         </block>
         <block type="motion_set_dc_motor">
             <value name="POWER">
-                <shadow type="math_number">
+                <shadow type="math_decimal_m100_p100">
                     <field name="NUM">30</field>
                 </shadow>
             </value>
         </block>
         <block type="motion_smart_servo_angle">
             <value name="SERVO_ID">
-                <shadow type="math_number">
+                <shadow type="math_decimal_1_30">
                     <field name="NUM">1</field>
                 </shadow>
             </value>
             <value name="SPEED">
-                <shadow type="math_number">
+                <shadow type="math_decimal_0_100">
                     <field name="NUM">40</field>
                 </shadow>
             </value>
             <value name="ANGLE">
-                <shadow type="math_number">
+                <shadow type="math_decimal_m150_p150">
                     <field name="NUM">0</field>
                 </shadow>
             </value>
         </block>
         <block type="motion_smart_servo">
             <value name="SERVO_ID">
-                <shadow type="math_number">
+                <shadow type="math_decimal_1_30">
                     <field name="NUM">1</field>
                 </shadow>
             </value>
             <value name="SPEED">
-                <shadow type="math_number">
+                <shadow type="math_decimal_0_100">
                     <field name="NUM">40</field>
                 </shadow>
             </value>
         </block>
         <block type="motion_servo">
             <value name="SPEED">
-                <shadow type="math_number">
+                <shadow type="math_decimal_0_100">
                     <field name="NUM">40</field>
                 </shadow>
             </value>
             <value name="ANGLE">
-                <shadow type="math_number">
+                <shadow type="math_decimal_0_180">
                     <field name="NUM">90</field>
                 </shadow>
             </value>
         </block>
         <block type="motion_step_motor">
             <value name="POWER">
-                <shadow type="math_number">
+                <shadow type="math_decimal_m100_p100">
                     <field name="NUM">30</field>
                 </shadow>
             </value>
             <value name="STEPS">
-                <shadow type="math_number">
+                <shadow type="math_decimal_0_1k">
                     <field name="NUM">100</field>
                 </shadow>
             </value>
@@ -390,7 +390,7 @@ const device_looks = function (deviceType, targetId) {
         ${blockSeparator}
         <block type="looks_set_digital_tube">
             <value name="VALUE">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM">0</field>
                 </shadow>
             </value>
@@ -399,17 +399,17 @@ const device_looks = function (deviceType, targetId) {
         ${blockSeparator}
         <block type="looks_set_led_light_rgb">
             <value name="R">
-                <shadow type="math_number">
+                <shadow type="math_decimal_0_255">
                     <field name="NUM">255</field>
                 </shadow>
             </value>
             <value name="G">
-                <shadow type="math_number">
+                <shadow type="math_decimal_0_255">
                     <field name="NUM">255</field>
                 </shadow>
             </value>
             <value name="B">
-                <shadow type="math_number">
+                <shadow type="math_decimal_0_255">
                     <field name="NUM">255</field>
                 </shadow>
             </value>
@@ -576,17 +576,17 @@ const control = function (isStage) {
 const device_control = function (deviceType, targetId) {
     return `
     <category name="%{BKY_CATEGORY_CONTROL}" id="control" colour="#FFAB19" secondaryColour="#CF8B17">
-        <block type="control_wait">
+        <block id="device_control_wait" type="control_wait">
             <value name="DURATION">
-                <shadow type="math_positive_number">
+                <shadow type="math_decimal_0_60s">
                     <field name="NUM">1</field>
                 </shadow>
             </value>
         </block>
         ${blockSeparator}
-        <block type="control_repeat">
+        <block id="device_control_repeat" type="control_repeat">
             <value name="TIMES">
-                <shadow type="math_whole_number">
+                <shadow type="math_decimal_whole">
                     <field name="NUM">10</field>
                 </shadow>
             </value>
@@ -900,101 +900,101 @@ const  device_operators = function (deviceType, targetId) {
 
     return `
     <category name="%{BKY_CATEGORY_OPERATORS}" id="operators" colour="#40BF4A" secondaryColour="#389438">
-        <block type="operator_add">
+        <block id="device_operator_add" type="operator_add">
             <value name="NUM1">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
             <value name="NUM2">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
         </block>
-        <block type="operator_subtract">
+        <block id="device_operator_subtract" type="operator_subtract">
             <value name="NUM1">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
             <value name="NUM2">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
         </block>
-        <block type="operator_multiply">
+        <block id="device_operator_multiply" type="operator_multiply">
             <value name="NUM1">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
             <value name="NUM2">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
         </block>
-        <block type="operator_divide">
+        <block id="device_operator_divide" type="operator_divide">
             <value name="NUM1">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
             <value name="NUM2">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
         </block>
         ${blockSeparator}
-        <block type="operator_random">
+        <block id="device_operator_random" type="operator_random">
             <value name="FROM">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM">1</field>
                 </shadow>
             </value>
             <value name="TO">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM">10</field>
                 </shadow>
             </value>
         </block>
         ${blockSeparator}
-        <block type="operator_gt">
+        <block id="device_operator_gt" type="operator_gt">
             <value name="OPERAND1">
-                <shadow type="text">
-                    <field name="TEXT"/>
+                <shadow type="math_decimal">
+                    <field name="NUM"/>
                 </shadow>
             </value>
             <value name="OPERAND2">
-                <shadow type="text">
-                    <field name="TEXT">50</field>
+                <shadow type="math_decimal">
+                    <field name="NUM">50</field>
                 </shadow>
             </value>
         </block>
-        <block type="operator_lt">
+        <block id="device_operator_lt" type="operator_lt">
             <value name="OPERAND1">
-                <shadow type="text">
-                    <field name="TEXT"/>
+                <shadow type="math_decimal">
+                    <field name="NUM"/>
                 </shadow>
             </value>
             <value name="OPERAND2">
-                <shadow type="text">
-                    <field name="TEXT">50</field>
+                <shadow type="math_decimal">
+                    <field name="NUM">50</field>
                 </shadow>
             </value>
         </block>
-        <block type="operator_equals">
+        <block id="device_operator_equals" type="operator_equals">
             <value name="OPERAND1">
-                <shadow type="text">
-                    <field name="TEXT"/>
+                <shadow type="math_decimal">
+                    <field name="NUM"/>
                 </shadow>
             </value>
             <value name="OPERAND2">
-                <shadow type="text">
-                    <field name="TEXT">50</field>
+                <shadow type="math_decimal">
+                    <field name="NUM">50</field>
                 </shadow>
             </value>
         </block>
@@ -1003,29 +1003,29 @@ const  device_operators = function (deviceType, targetId) {
         <block type="operator_or"/>
         <block type="operator_not"/>
         ${blockSeparator}
-        <block type="operator_mod">
+        <block id="device_operator_mod" type="operator_mod">
             <value name="NUM1">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
             <value name="NUM2">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
         </block>
-        <block type="operator_round">
+        <block id="device_operator_round" type="operator_round">
             <value name="NUM">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
         </block>
         ${blockSeparator}
-        <block type="operator_mathop">
+        <block id="device_operator_mathop" type="operator_mathop">
             <value name="NUM">
-                <shadow type="math_number">
+                <shadow type="math_decimal">
                     <field name="NUM"/>
                 </shadow>
             </value>
