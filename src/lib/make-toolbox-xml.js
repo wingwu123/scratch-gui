@@ -376,6 +376,9 @@ const looks = function (isStage, targetId, costumeName, backdropName) {
     `;
 };
 
+/*
+
+*/
 
 const device_looks = function (deviceType, targetId) {
 
@@ -383,9 +386,29 @@ const device_looks = function (deviceType, targetId) {
     <category name="%{BKY_CATEGORY_LOOKS}" id="looks" colour="#9966FF" secondaryColour="#774DCB">
         ${`
         <block type="looks_set_emotion">
+            <value name="EMOTION_ID">
+                <shadow type="matrix_emotion_image">
+                    <value name="EMOTION">
+                        <shadow type="matrix_emotion">
+                            <field name="EMOTION">1</field>
+                        </shadow>
+                    </value>
+                </shadow>
+            </value>
         </block>
         <block type="looks_off_emotion"/>
-        <block type="looks_set_symbol"/>
+        <block type="looks_set_symbol">
+            <value name="SYMBOL">
+                <shadow type="matrix_symble_image">
+                    <value name="SYMBLE">
+                        <shadow type="matrix_symble">
+                            <field name="SYMBLE">1</field>
+                        </shadow>
+                    </value>
+                </shadow>
+            </value>
+        </block>
+        <block type="looks_custom_led_matrix"/>
         <block type="looks_off_led_matrix"/>
         ${blockSeparator}
         <block type="looks_set_digital_tube">
@@ -697,10 +720,13 @@ const device_sensing = function (deviceType, targetId) {
 
         <block type="sensing_gas_pressure"/>
         <block type="sensing_infrared_receiver"/>
+        <block type="sensing_infrared"/>
         <block type="sensing_potentiometer"/>
         <block type="sensing_bluetooth_receiver"/>
+        <block type="sensing_bluetooth_stick"/>
         <block type="sensing_jointed_arm"/>
         <block type="sensing_touch_button"/>
+        <block type="sensing_key_button"/>
         <block type="sensing_gyroscope"/> 
         <block type="sensing_limit_switch"/>
         <block type="sensing_water_temperature"/>

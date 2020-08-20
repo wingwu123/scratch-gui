@@ -94,9 +94,7 @@ class GUIComponent extends React.Component {
 
         this.state = {code:defaultCode};
         this.handleCodeChanged(defaultCode);
-        console.log('handleCodeChanged ---- ');
 
-        console.log('GUI ---- ', '[' +this.props.vm.runtime.code+']');
     }
 
     handleCodeChanged(code) {
@@ -214,6 +212,7 @@ class GUIComponent extends React.Component {
             onEditorSelected,
             onCodeChanged,
             editor,
+            isDevice,
 
             ...componentProps
         } = omit(this.props, 'dispatch');
@@ -431,19 +430,22 @@ class GUIComponent extends React.Component {
                                                         stageSize={stageSize}
                                                         vm={vm}
                                                     />
-                                                    <Box className={styles.extensionButtonContainer}>
-                                                        <button
-                                                            className={styles.extensionButton}
-                                                            title={intl.formatMessage(messages.addExtension)}
-                                                            onClick={onExtensionButtonClick}
-                                                        >
-                                                            <img
-                                                                className={styles.extensionButtonIcon}
-                                                                draggable={false}
-                                                                src={addExtensionIcon}
-                                                            />
-                                                        </button>
-                                                    </Box>
+                                                    {isDevice ? null :
+                                                        <Box className={styles.extensionButtonContainer}>
+                                                            <button
+                                                                className={styles.extensionButton}
+                                                                title={intl.formatMessage(messages.addExtension)}
+                                                                onClick={onExtensionButtonClick}
+                                                            >
+                                                                <img
+                                                                    className={styles.extensionButtonIcon}
+                                                                    draggable={false}
+                                                                    src={addExtensionIcon}
+                                                                />
+                                                            </button>
+                                                        </Box>
+                                                    }
+                                                    
                                                     <Box className={styles.watermark}>
                                                         <Watermark />
                                                     </Box>
@@ -496,7 +498,6 @@ class GUIComponent extends React.Component {
                                             selectedTabPanelClassName={tabClassNames.tabPanelSelected}
                                             onSelect={tab => {
 
-                                                console.log('onSelect ' + tab);
                                                 onTargetTabActivate(tab);
                                                 return true;
                                             }}

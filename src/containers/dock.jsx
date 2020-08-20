@@ -97,8 +97,6 @@ class Dock extends React.Component {
 
         if (size < 40) {
             this.hideDock();
-
-            console.log(" hideDock this.oldDockSize " + this.oldDockSize)
         }
         else {
             this.setState({ dockSize: size });

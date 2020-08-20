@@ -78,7 +78,6 @@ class StageSelector extends React.Component {
         this.handleNewBackdrop(vmBackdrop, shouldActivateTab);
     }
     handleClick () {
-        console.log('StageSelector handleClick');
         this.props.onSelect(this.props.id);
     }
     handleNewBackdrop (backdrops_, shouldActivateTab = true) {

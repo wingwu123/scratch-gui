@@ -4,6 +4,9 @@ import bindAll from 'lodash.bindall';
 
 import autoprefix from './autoprefix';
 
+import icon_code from './icon-code.svg';
+import icon_close from './icon-close.svg';
+
 const styles = {
 
     dock_wrapper: {
@@ -81,7 +84,7 @@ const styles = {
         cursor: 'pointer',
         width: '30px',
         height: '24px',
-        background: 'rgba(255, 163, 18, 1)',
+        background: 'rgba(0,185,255, 0.9)',
         borderRadius: '80px 0px 0px 80px'
     },
 
@@ -194,6 +197,7 @@ class Dock extends React.Component {
 
         const { 
             children, 
+            isVisible,
             handleDockClose
          } = this.props;
 
@@ -202,10 +206,13 @@ class Dock extends React.Component {
 
         const dockContent = Object.assign({}, ...getDockContentStyles(this.props));
 
+        //
         return (
 
             <div style={dockStyles}>
-                <div style={styles.closeButton} onClick={handleDockClose}>X</div>
+                <div style={styles.closeButton} onClick={handleDockClose}>
+                    <img draggable={false} src={ isVisible ? icon_close : icon_code} />
+                </div>
                 <div style={styles.dockContentWarpper}>
                     <div style={resizerStyles}
                         onMouseDown={this.handleMouseDown} />
@@ -256,7 +263,7 @@ class Dock extends React.Component {
         if (!this.state.isResizing)
             return;
         e.preventDefault();
-        console.log(" dock mouse move" + e.clientX + " " + e.clientY );
+        //console.log(" dock mouse move" + e.clientX + " " + e.clientY );
 
         const { clientX: x, clientY: y } = e;
 

@@ -41,7 +41,7 @@ class StagePane extends React.Component {
     }
 
     handleSelectSprite (id) {
-        console.log("StagePane handleSelectSprite");
+
         this.props.vm.setEditingTarget(id);
         if (this.props.stage && id !== this.props.stage.id) {
             this.props.onHighlightTarget(id);

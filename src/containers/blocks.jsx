@@ -352,10 +352,6 @@ class Blocks extends React.Component {
             const targetSounds = target.getSounds();
             const dynamicBlocksXML = this.props.vm.runtime.getBlocksXML();
 
-            //console.log("dynamicBlocksXML " + dynamicBlocksXML);
-
-            console.log("target : " + target.deviceType);
-
             return makeToolboxXML(target.isStage, target.id, dynamicBlocksXML,
                 targetCostumes[targetCostumes.length - 1].name,
                 stageCostumes[stageCostumes.length - 1].name,
@@ -370,10 +366,8 @@ class Blocks extends React.Component {
         // When we change sprites, update the toolbox to have the new sprite's blocks
         const toolboxXML = this.getToolboxXML();
         
-        console.log("onWorkspaceUpdate toolboxXML ");
-
         if(this.props.isVisible){
-            console.log("onWorkspaceUpdate setlistVarVisible ");
+
             this.workspace.setlistVarVisible(!( this.props.vm.editingTarget && this.props.vm.editingTarget.deviceType != ''));
         }
 

@@ -104,8 +104,6 @@ class DevicePane extends React.Component {
     }
     handleSelectDevice (id) {
 
-        console.log("handleSelectDevice");
-
         this.props.vm.setEditingTarget(id);
         if (this.props.stage && id !== this.props.stage.id) {
             this.props.onHighlightTarget(id);
@@ -135,13 +133,9 @@ class DevicePane extends React.Component {
     }
     handleActivateBlocksTab () {
 
-        console.log("handleActivateBlocksTab");
-
         this.props.onActivateTab(BLOCKS_TAB_INDEX);
     }
     handleNewSprite (spriteJSONString) {
-
-        console.trace("--handleNewSprite--");
 
         return this.props.vm.addSprite(spriteJSONString)
             .then(this.handleActivateBlocksTab);

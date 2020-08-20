@@ -60,8 +60,6 @@ const DeviceSelectorComponent = function (props) {
         spriteInfoDisabled = true;
     }
 
-    console.log("DeviceSelectorComponent devices.length", Object.keys(devices).length);
-
     return (
         <Box
             className={styles.spriteSelector}

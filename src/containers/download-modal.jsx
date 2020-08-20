@@ -68,7 +68,6 @@ class DownloadModal extends React.Component {
     }
 
     addMessage (line){
-        console.log(line);
 
         let lines = [].concat(this.state.lines);
 

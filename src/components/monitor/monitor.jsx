@@ -32,13 +32,6 @@ const modes = {
 
 const MonitorComponent = props => {
 
-    for (const key in props) {
-        if (props.hasOwnProperty(key)) {
-            console.log('--MonitorComponent--', key)
-            
-        }
-    }
-
     return (
 
     <ContextMenuTrigger
