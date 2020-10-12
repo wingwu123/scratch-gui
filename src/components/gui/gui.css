@@ -68,7 +68,7 @@
     border: 1px solid $ui-black-transparent;
 
     padding: 0.125rem 1.25rem 0;
-    font-size: 0.75rem;
+    font-size: 16px;
 
     background-color: $ui-tertiary;
     color: $text-primary-transparent;

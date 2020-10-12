@@ -224,3 +224,11 @@
     margin: 0.5rem;
     vertical-align: middle;
 }
+
+.right-item-group {
+    position: absolute;
+    right: 10px;
+    display: flex;
+    flex-direction: row;
+    align-items: right;
+}

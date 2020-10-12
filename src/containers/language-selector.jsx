@@ -7,6 +7,10 @@ import {closeLanguageMenu} from '../reducers/menus';
 
 import LanguageSelectorComponent from '../components/language-selector/language-selector.jsx';
 
+import ServiceInstance from '../broker/ServiceInstance';
+
+const config_id_currentLang = "lang.current";
+
 class LanguageSelector extends React.Component {
     constructor (props) {
         super(props);
@@ -57,6 +61,7 @@ const mapDispatchToProps = dispatch => ({
     onChangeLanguage: locale => {
         dispatch(selectLocale(locale));
         dispatch(closeLanguageMenu());
+        ServiceInstance.configure.setAndSave(config_id_currentLang, locale);
     }
 });
 

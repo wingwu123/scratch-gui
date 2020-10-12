@@ -147,7 +147,7 @@ class Blocks extends React.Component {
         }
     }
     shouldComponentUpdate (nextProps, nextState) {
-        return (
+        let needUpdate = (
             this.state.prompt !== nextState.prompt ||
             this.props.isVisible !== nextProps.isVisible ||
             this._renderedToolboxXML !== nextProps.toolboxXML ||
@@ -155,8 +155,12 @@ class Blocks extends React.Component {
             this.props.customProceduresVisible !== nextProps.customProceduresVisible ||
             this.props.locale !== nextProps.locale ||
             this.props.anyModalVisible !== nextProps.anyModalVisible ||
-            this.props.stageSize !== nextProps.stageSize
+            this.props.stageSize !== nextProps.stageSize ||
+            this.props.connectMode !== nextProps.connectMode 
+            
         );
+
+        return needUpdate;
     }
     componentDidUpdate (prevProps) {
         // If any modals are open, call hideChaff to close z-indexed field editors
@@ -167,11 +171,15 @@ class Blocks extends React.Component {
         // Only rerender the toolbox when the blocks are visible and the xml is
         // different from the previously rendered toolbox xml.
         // Do not check against prevProps.toolboxXML because that may not have been rendered.
-        if (this.props.isVisible && this.props.toolboxXML !== this._renderedToolboxXML) {
+        if (this.props.isVisible && 
+            (this.props.toolboxXML !== this._renderedToolboxXML) ) {
             this.requestToolboxUpdate();
         }
 
-        
+        if(this.props.connectMode !== prevProps.connectMode) {
+            this.props.vm.refreshWorkspace();
+            this.requestToolboxUpdate();
+        }
 
         if (this.props.isVisible === prevProps.isVisible) {
             if (this.props.stageSize !== prevProps.stageSize) {
@@ -223,6 +231,7 @@ class Blocks extends React.Component {
     }
 
     updateToolbox () {
+
         this.toolboxUpdateTimeout = false;
 
         const categoryId = this.workspace.toolbox_.getSelectedCategoryId();
@@ -356,7 +365,7 @@ class Blocks extends React.Component {
                 targetCostumes[targetCostumes.length - 1].name,
                 stageCostumes[stageCostumes.length - 1].name,
                 targetSounds.length > 0 ? targetSounds[targetSounds.length - 1].name : ''
-                , target.deviceType
+                , target.deviceType, this.props.connectMode
             );
         } catch {
             return null;
@@ -384,6 +393,7 @@ class Blocks extends React.Component {
         const dom = this.ScratchBlocks.Xml.textToDom(data.xml);
         try {
             this.ScratchBlocks.Xml.clearWorkspaceAndLoadFromXml(dom, this.workspace);
+
         } catch (error) {
             // The workspace is likely incomplete. What did update should be
             // functional.
@@ -545,6 +555,7 @@ class Blocks extends React.Component {
             onRequestCloseExtensionLibrary,
             onRequestCloseCustomProcedures,
             toolboxXML,
+            connectMode,
             ...props
         } = this.props;
         /* eslint-enable no-unused-vars */

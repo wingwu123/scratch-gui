@@ -79,7 +79,7 @@ const styles = {
         userSelect: 'none',
         paddingLeft: '0.2rem',
         zIndex: '99',
-        top: '94px',
+        top: '4px',
         left: '-30px',
         cursor: 'pointer',
         width: '30px',

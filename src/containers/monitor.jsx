@@ -185,6 +185,7 @@ class Monitor extends React.Component {
     }
     render () {
         const monitorProps = monitorAdapter(this.props);
+
         const showSliderOption = availableModes(this.props.opcode).indexOf('slider') !== -1;
         const isList = this.props.mode === 'list';
         return (

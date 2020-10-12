@@ -11,6 +11,7 @@ class Storage extends ScratchStorage {
         super();
         this.cacheDefaultProject();
     }
+
     addOfficialScratchWebStores () {
         this.addWebStore(
             [this.AssetType.Project],

@@ -38,6 +38,8 @@ import Alerts from '../../containers/alerts.jsx';
 import DragLayer from '../../containers/drag-layer.jsx';
 import ConnectionModal from '../../containers/connection-modal.jsx';
 import TelemetryModal from '../telemetry-modal/telemetry-modal.jsx';
+import ConnModel from '../../containers/arduino-conn-modal.jsx';
+import AboutModel from '../../containers/about-modal.jsx';
 
 import layout, { STAGE_SIZE_MODES } from '../../lib/layout-constants';
 import { resolveStageSize } from '../../lib/screen-utils';
@@ -45,11 +47,11 @@ import { resolveStageSize } from '../../lib/screen-utils';
 import styles from './gui.css';
 import targetStyles from './target-tab-styles.css';
 import addExtensionIcon from './icon--extensions.svg';
+import blockIcon from './icon--block.svg';
 import codeIcon from './icon--code.svg';
 import costumesIcon from './icon--costumes.svg';
 import soundsIcon from './icon--sounds.svg';
 
-import EditorSelector from '../editor-selector/editor-selector.jsx'
 import MonacoEditor from "react-monaco-editor";
 
 import {
@@ -58,6 +60,17 @@ import {
     BLOCK_EDITOR,
     CODE_EDITOR
 } from '../../reducers/editor-type';
+
+import {
+    BLOCKS_TAB_INDEX,
+    COSTUMES_TAB_INDEX,
+    SOUNDS_TAB_INDEX,
+    CCODE_TAB_INDEX
+} from '../../reducers/editor-tab';
+
+import ServiceHOC from '../../containers/service-hoc.jsx';
+
+import ServiceInstance from '../../broker/ServiceInstance.js';
 
 const messages = defineMessages({
     addExtension: {
@@ -80,6 +93,8 @@ class GUIComponent extends React.Component {
             ,'handleMouseMove'
             ,'handleCodeChanged'
             ,'onProjectLoaded'
+            ,'handleLogoClicked'
+            ,'handleDownloadClicked'
         ]);
 
         let defaultCode = [
@@ -90,22 +105,58 @@ class GUIComponent extends React.Component {
         '',
         'void _setup(){',
         '',
+        '}',
+        'void _loop(){',
+        '',
         '}'].join('\n');
 
-        this.state = {code:defaultCode};
         this.handleCodeChanged(defaultCode);
 
+        this.state = {
+            productName: "WOBOT Scratch", 
+            version: "1.0.0", 
+            Electron: "8.2.5", 
+            Chrome: "80.0.3987.165",
+            hasUpdate: false,
+            newVersion: "",
+            inDownloading:false,
+            downlaodProgress:0,
+            webGlModalVisiable:true,
+        };
+
+        ServiceInstance.on(ServiceInstance.INITIALIZE_EVENT, () => {
+
+            console.info("ServiceInstance initlized");
+
+            ServiceInstance.updaterBroker.progress().subscribe(downlaodProgress => {
+
+                this.setState({ inDownloading: true, downlaodProgress: downlaodProgress });
+
+            });
+
+            ServiceInstance.updaterBroker.hasUpdate().subscribe(newVersion => {
+
+                this.setState({ hasUpdate: true, newVersion: newVersion });
+
+            });
+
+        });
+        
     }
 
     handleCodeChanged(code) {
-        this.props.vm.runtime.code = code;
+
+        if(this.props.vm.runtime.code != code)
+        {
+            this.props.vm.runtime.code = code;
+        }
     }
 
     handleResize(event) {
         const size = {width:event.width, height:event.height};
         //console.log("handleResize " + JSON.stringify(size));
 
-        if("dockRef" in this)
+        if("dockRef" in this && this.dockRef != null)
         {
             this.dockRef.setParentSize(size);
         }
@@ -117,6 +168,26 @@ class GUIComponent extends React.Component {
         {
             this.dockRef.handleMouseMove(e);
         }
+    }
+
+    handleLogoClicked() {
+
+        this.setState({ inDownloading: false});
+
+        ServiceInstance.updaterBroker.appInfo().then(info => {
+
+            console.info("handleLogoClicked ", info);
+
+            this.setState(info);
+
+            this.props.onClickLogo();
+        });
+    }
+
+    handleDownloadClicked() {
+        ServiceInstance.updaterBroker.downloadUpdate().then(() =>{
+
+        });
     }
 
     componentDidMount() {
@@ -133,10 +204,7 @@ class GUIComponent extends React.Component {
     }
 
     onProjectLoaded () {
-        if (this.props.vm.runtime.code) {
-            
-            this.setState({code:this.props.vm.runtime.code});
-        }
+
     }
 
     render() {
@@ -165,8 +233,11 @@ class GUIComponent extends React.Component {
             canUseCloud,
             children,
             connectionModalVisible,
+            arduinoConnModalVisible,
+            aboutModalVisible,
             costumeLibraryVisible,
             costumesTabVisible,
+            ccodeTabVisible,
             enableCommunity,
             intl,
             isCreating,
@@ -185,8 +256,10 @@ class GUIComponent extends React.Component {
             onToggleLoginOpen,
             onActivateCostumesTab,
             onActivateSoundsTab,
+            onActivateCCodeTab,
             onActivateTab,
             onClickLogo,
+            onSaveConfirm,
             onExtensionButtonClick,
             onProjectTelemetryEvent,
             onRequestCloseBackdropLibrary,
@@ -207,18 +280,22 @@ class GUIComponent extends React.Component {
             targetIsStage,
             telemetryModalVisible,
             tipsLibraryVisible,
-            compiler,
+            electron,
             vm,
             onEditorSelected,
             onCodeChanged,
             editor,
             isDevice,
+            connectMode,
 
             ...componentProps
         } = omit(this.props, 'dispatch');
         if (children) {
             return <Box {...componentProps}>{children}</Box>;
         }
+
+        const compiler = electron ? electron.compiler : null;
+        const port = electron ? electron.port : null;
 
         const tabClassNames = {
             tabs: styles.tabs,
@@ -250,10 +327,6 @@ class GUIComponent extends React.Component {
             //scrollbar:{horizontal:2, vertical:2}
           };
 
-        let blockEditor = (this.props.editor == BLOCK_EDITOR);
-
-        
-
         return (<MediaQuery minWidth={layout.fullSizeMinWidth}>{isFullSize => {
             const stageSize = resolveStageSize(stageSizeMode, isFullSize);
 
@@ -275,7 +348,8 @@ class GUIComponent extends React.Component {
                         className={styles.pageWrapper}
                         dir={isRtl ? 'rtl' : 'ltr'}
                         {...componentProps}
-                    >
+                    > 
+                    {/*
                         {telemetryModalVisible ? (
                             <TelemetryModal
                                 onCancel={onTelemetryModalCancel}
@@ -285,15 +359,17 @@ class GUIComponent extends React.Component {
                                 onShowPrivacyPolicy={onShowPrivacyPolicy}
                             />
                         ) : null}
+                    */}
+                        
                         {loading ? (
                             <Loader />
                         ) : null}
                         {isCreating ? (
                             <Loader messageId="gui.loader.creating" />
                         ) : null}
-                        {isRendererSupported ? null : (
-                            <WebGlModal isRtl={isRtl} />
-                        )}
+                        {!isRendererSupported && this.state.webGlModalVisiable ? (
+                            <WebGlModal isRtl={isRtl} onCancel={() => { this.setState({webGlModalVisiable:false}); }} />
+                        ) : null }
                         {tipsLibraryVisible ? (
                             <TipsLibrary />
                         ) : null}
@@ -314,6 +390,24 @@ class GUIComponent extends React.Component {
                                 onRequestClose={onRequestCloseCostumeLibrary}
                             />
                         ) : null}
+
+                        {aboutModalVisible ? 
+                        (<AboutModel 
+                            productName={this.state.productName} 
+                            version={this.state.version} 
+                            ElectronVersion={this.state.Electron}
+                            ChromeVersion={this.state.Chrome}
+                            hasUpdate={this.state.hasUpdate}
+                            newVersion={this.state.newVersion}
+                            inDownloading={this.state.inDownloading}
+                            progressValue={this.state.downlaodProgress}
+                            onDownload={this.handleDownloadClicked}
+                            />) : null}
+
+                        {arduinoConnModalVisible?(
+                            <ConnModel compiler = { compiler} connectMode={connectMode} port={port} />
+                        ):null}
+
                         {backdropLibraryVisible ? (
                             <BackdropLibrary
                                 vm={vm}
@@ -342,7 +436,8 @@ class GUIComponent extends React.Component {
                             showComingSoon={showComingSoon}
                             onClickAbout={onClickAbout}
                             onClickAccountNav={onClickAccountNav}
-                            onClickLogo={onClickLogo}
+                            onClickLogo={this.handleLogoClicked}
+                            onSaveConfirm={onSaveConfirm}
                             onCloseAccountNav={onCloseAccountNav}
                             onLogOut={onLogOut}
                             onOpenRegistration={onOpenRegistration}
@@ -367,7 +462,7 @@ class GUIComponent extends React.Component {
                                             <Tab className={tabClassNames.tab}>
                                                 <img
                                                     draggable={false}
-                                                    src={codeIcon}
+                                                    src={blockIcon}
                                                 />
                                                 <FormattedMessage
                                                     defaultMessage="Code"
@@ -375,60 +470,87 @@ class GUIComponent extends React.Component {
                                                     id="gui.gui.codeTab"
                                                 />
                                             </Tab>
-                                            <Tab
-                                                className={tabClassNames.tab}
-                                                onClick={onActivateCostumesTab}
-                                            >
-                                                <img
-                                                    draggable={false}
-                                                    src={costumesIcon}
-                                                />
-                                                {targetIsStage ? (
-                                                    <FormattedMessage
-                                                        defaultMessage="Backdrops"
-                                                        description="Button to get to the backdrops panel"
-                                                        id="gui.gui.backdropsTab"
+                                            {
+                                                isDevice ? null :
+                                                <Tab
+                                                    className={tabClassNames.tab}
+                                                    onClick={onActivateCostumesTab}
+                                                >
+                                                    <img
+                                                        draggable={false}
+                                                        src={costumesIcon}
                                                     />
-                                                ) : (
+                                                    {targetIsStage ? (
                                                         <FormattedMessage
-                                                            defaultMessage="Costumes"
-                                                            description="Button to get to the costumes panel"
-                                                            id="gui.gui.costumesTab"
+                                                            defaultMessage="Backdrops"
+                                                            description="Button to get to the backdrops panel"
+                                                            id="gui.gui.backdropsTab"
                                                         />
-                                                    )}
-                                            </Tab>
-                                            <Tab
-                                                className={tabClassNames.tab}
-                                                onClick={onActivateSoundsTab}
-                                            >
-                                                <img
-                                                    draggable={false}
-                                                    src={soundsIcon}
-                                                />
-                                                <FormattedMessage
-                                                    defaultMessage="Sounds"
-                                                    description="Button to get to the sounds panel"
-                                                    id="gui.gui.soundsTab"
-                                                />
-                                            </Tab>
+                                                    ) : (
+                                                            <FormattedMessage
+                                                                defaultMessage="Costumes"
+                                                                description="Button to get to the costumes panel"
+                                                                id="gui.gui.costumesTab"
+                                                            />
+                                                        )}
+                                                </Tab>
+                                            }
+
+                                            {
+                                                isDevice ? null : 
+                                                <Tab
+                                                    className={tabClassNames.tab}
+                                                    onClick={onActivateSoundsTab}
+                                                >
+                                                    <img
+                                                        draggable={false}
+                                                        src={soundsIcon}
+                                                    />
+                                                    <FormattedMessage
+                                                        defaultMessage="Sounds"
+                                                        description="Button to get to the sounds panel"
+                                                        id="gui.gui.soundsTab"
+                                                    />
+                                                </Tab>
+                                                    
+                                            }
+                                            {
+                                                isDevice ? 
+                                                 <Tab
+                                                        className={tabClassNames.tab}
+                                                        onClick={onActivateCCodeTab}
+                                                    >
+                                                        <img
+                                                            draggable={false}
+                                                            src={codeIcon}
+                                                        />
+                                                        <FormattedMessage
+                                                            defaultMessage="C Code"
+                                                            description="Button to get to the C code panel"
+                                                            id="gui.gui.ccodeTab"
+                                                        />
+                                                    </Tab>
+                                                    : null
+                                            }
+
                                         </TabList>
                                         <TabPanel className={tabClassNames.tabPanel} ref={(ref) => {
 
                                             this.element = ref;
                                         }} onMouseMove={this.handleMouseMove} >
                                             <Box className={styles.blocksWrapper}>
-                                                <EditorSelector editor={editor} onSelected={onEditorSelected} />
 
-                                                <Box className={classNames(styles.editorItemWrapper, blockEditor ? null : styles.editorItemWrapperHidden)}>
+                                                <Box className={classNames(styles.editorItemWrapper)}>
                                                     <Blocks
                                                         canUseCloud={canUseCloud}
                                                         grow={1}
-                                                        isVisible={blocksTabVisible && blockEditor}
+                                                        isVisible={blocksTabVisible}
                                                         options={{
                                                             media: `${basePath}static/blocks-media/`
                                                         }}
                                                         stageSize={stageSize}
                                                         vm={vm}
+                                                        connectMode={connectMode}
                                                     />
                                                     {isDevice ? null :
                                                         <Box className={styles.extensionButtonContainer}>
@@ -445,7 +567,7 @@ class GUIComponent extends React.Component {
                                                             </button>
                                                         </Box>
                                                     }
-                                                    
+
                                                     <Box className={styles.watermark}>
                                                         <Watermark />
                                                     </Box>
@@ -453,28 +575,47 @@ class GUIComponent extends React.Component {
                                                     >
                                                     </Dock>
                                                 </Box>
-                                                <Box className={classNames(styles.editorItemWrapper, blockEditor ? styles.editorItemWrapperHidden : null)}>
-                                                    <Box className={styles.codeEditorWrapper}>
-                                                        <MonacoEditor
-                                                            language="cpp"
-                                                            value={this.state.code}
-                                                            options={codeEditorOptions}
-                                                            theme={'vs-light'}
-                                                            onChange={this.handleCodeChanged}
-                                                        />
-                                                    </Box>
 
-                                                </Box>
                                             </Box>
 
+                                        </TabPanel>
+                                        {
+                                            isDevice ? null :
+                                                <TabPanel className={tabClassNames.tabPanel}>
+                                                    {costumesTabVisible ? <CostumeTab vm={vm} /> : null}
+                                                </TabPanel>
+                                        }
 
-                                        </TabPanel>
-                                        <TabPanel className={tabClassNames.tabPanel}>
-                                            {costumesTabVisible ? <CostumeTab vm={vm} /> : null}
-                                        </TabPanel>
-                                        <TabPanel className={tabClassNames.tabPanel}>
-                                            {soundsTabVisible ? <SoundTab vm={vm} /> : null}
-                                        </TabPanel>
+                                        {
+                                            isDevice ? null :
+                                                <TabPanel className={tabClassNames.tabPanel}>
+                                                    {soundsTabVisible ? <SoundTab vm={vm} /> : null}
+                                                </TabPanel>
+                                        }
+                                        {
+                                            isDevice ?
+                                                <TabPanel className={tabClassNames.tabPanel}>
+                                                    {
+                                                        ccodeTabVisible ?
+                                                            <Box className={classNames(styles.editorItemWrapper )}>
+                                                                <Box className={styles.codeEditorWrapper}>
+                                                                    <MonacoEditor
+                                                                        language="cpp"
+                                                                        value={this.props.vm.runtime.code}
+                                                                        options={codeEditorOptions}
+                                                                        theme={'vs-light'}
+                                                                        onChange={this.handleCodeChanged}
+                                                                    />
+                                                                </Box>
+
+                                                            </Box>
+                                                            : null
+                                                    }
+
+                                                </TabPanel>
+                                                : null
+                                        }
+                                        
                                     </Tabs>
                                     {backpackVisible ? (
                                         <Backpack host={backpackHost} />
@@ -506,10 +647,6 @@ class GUIComponent extends React.Component {
                                                 <Tab
                                                     className={targetTabClassNames.tab}
                                                 >
-                                                    <img
-                                                        draggable={false}
-                                                        src={codeIcon}
-                                                    />
                                                     <FormattedMessage
                                                         defaultMessage="Device"
                                                         description="Button to get to the device panel"
@@ -519,10 +656,6 @@ class GUIComponent extends React.Component {
                                                 <Tab
                                                     className={targetTabClassNames.tab}
                                                 >
-                                                    <img
-                                                        draggable={false}
-                                                        src={codeIcon}
-                                                    />
                                                     <FormattedMessage
                                                         defaultMessage="Role"
                                                         description="Button to get to the role panel"
@@ -534,10 +667,6 @@ class GUIComponent extends React.Component {
                                                         <Tab
                                                             className={targetTabClassNames.tab}
                                                         >
-                                                            <img
-                                                                draggable={false}
-                                                                src={codeIcon}
-                                                            />
                                                             <FormattedMessage
                                                                 defaultMessage="Stage"
                                                                 description="Button to get to the stage panel"
@@ -615,6 +744,7 @@ GUIComponent.propTypes = {
     children: PropTypes.node,
     costumeLibraryVisible: PropTypes.bool,
     costumesTabVisible: PropTypes.bool,
+    ccodeTabVisible:PropTypes.bool,
     enableCommunity: PropTypes.bool,
     intl: intlShape.isRequired,
     isCreating: PropTypes.bool,
@@ -630,6 +760,7 @@ GUIComponent.propTypes = {
     onClickAbout: PropTypes.func,
     onClickAccountNav: PropTypes.func,
     onClickLogo: PropTypes.func,
+    onSaveConfirm: PropTypes.func,
     onCloseAccountNav: PropTypes.func,
     onExtensionButtonClick: PropTypes.func,
     onLogOut: PropTypes.func,
@@ -663,8 +794,8 @@ GUIComponent.defaultProps = {
     canEditTitle: false,
     canManageFiles: true,
     canRemix: false,
-    canSave: true,
-    canCreateCopy: true,
+    canSave: false,
+    canCreateCopy: false,
     canShare: false,
     canUseCloud: false,
     enableCommunity: false,
@@ -680,12 +811,14 @@ const mapStateToProps = state => ({
     stageSizeMode: state.scratchGui.stageSize.stageSize,
     stage: state.scratchGui.targets.stage,
     editingTarget: state.scratchGui.targets.editingTarget,
-    editor: state.scratchGui.editorType.editor
+    editor: state.scratchGui.editorType.editor,
+    connectMode: state.scratchGui.deviceConnected.mode
 });
 
 const mapDispatchToProps = dispatch => ({
     onEditorSelected: (editor) => dispatch(editorTypeSelect(editor)),
     onCodeChanged: (code) => dispatch(codeChanged(code)),
+
 });
 
 export default injectIntl(connect(

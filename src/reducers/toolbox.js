@@ -18,6 +18,7 @@ const reducer = function (state, action) {
 };
 
 const updateToolbox = function (toolboxXML) {
+
     return {
         type: UPDATE_TOOLBOX,
         toolboxXML: toolboxXML

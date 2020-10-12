@@ -14,10 +14,10 @@ import styles from './device-selector.css';
 
 import DownloadModel from '../../containers/download-modal.jsx'
 
-import {
-    openDownloadModal
-} from '../../reducers/modals';
 
+import {
+    CONNECT_MODE_DEWNLOAD,
+    CONNECT_MODE_ONLINE} from '../../reducers/device-connected';
 
 const DeviceSelectorComponent = function (props) {
     const {
@@ -50,6 +50,11 @@ const DeviceSelectorComponent = function (props) {
         onDownloadModelClose,
         isDownloadVisible,
         compiler,
+        onDisconnectClick,
+        onConnectingClick,
+        isDeviceConnected,
+        connectMode,
+        onToggleButtonClicked,
 
         ...componentProps
     } = props;
@@ -59,6 +64,8 @@ const DeviceSelectorComponent = function (props) {
         selectedDevice = {};
         spriteInfoDisabled = true;
     }
+
+    let onlineMode = (connectMode == CONNECT_MODE_ONLINE);
 
     return (
         <Box
@@ -90,7 +97,19 @@ const DeviceSelectorComponent = function (props) {
                     />
                 </Box>
                 <Box className={styles.buttonColumn}>
-                    <button className={styles.downloadButton} onClick={onDownloadClick}>下载</button>
+
+                    {
+                        isDeviceConnected && !onlineMode ?
+                        <button className={styles.downloadButton} onClick={onDownloadClick}>下载</button>
+                        :null
+                    }
+
+                    {
+                        isDeviceConnected ?
+                        <button className={styles.downloadButton} onClick={onDisconnectClick}>断开</button>
+                        :<button className={styles.downloadButton} onClick={onConnectingClick}>连接</button>
+                    }
+                    
                 </Box>
             </Box>
 
@@ -138,9 +157,7 @@ DeviceSelectorComponent.propTypes = {
 const mapStateToProps = () => ({});
 
 const mapDispatchToProps = dispatch => ({
-    onDownloadClick: () => {
-        dispatch(openDownloadModal());
-    }
+
 });
 
 export default connect(

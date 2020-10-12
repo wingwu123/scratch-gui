@@ -9,6 +9,7 @@ import Stage from '../../containers/stage.jsx';
 import Loader from '../loader/loader.jsx';
 
 import styles from './stage-wrapper.css';
+import {getStageDimensions} from '../../lib/screen-utils.js';
 
 const StageWrapperComponent = function (props) {
     const {
@@ -19,6 +20,13 @@ const StageWrapperComponent = function (props) {
         stageSize,
         vm
     } = props;
+
+    const stageDimensions = getStageDimensions(stageSize, isFullScreen);
+
+    const sizeStyle = {
+        minWidth: stageDimensions.width,
+        minHeight: stageDimensions.height,
+    };
 
     return (
         <Box
@@ -38,7 +46,7 @@ const StageWrapperComponent = function (props) {
                             stageSize={stageSize}
                             vm={vm}
                         /> :
-                        null
+                        <div className={styles.stagePlaceholder} style={sizeStyle}> </div>
                 }
             </Box>
             {loading ? (

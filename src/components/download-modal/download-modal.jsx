@@ -27,6 +27,7 @@ const CameraModal = ({ intl, ...props }) => (
         contentLabel={intl.formatMessage(messages.modalTitle)}
         onRequestClose={props.onCancel}
         id={'download'}
+        shouldCloseOnOverlayClick={false}
     >
         <Box className={styles.body}>
             {/* "active","success","error","default" status="default" */}

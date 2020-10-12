@@ -50,7 +50,12 @@ Modal.propTypes = {
     id: PropTypes.string.isRequired,
     isRtl: PropTypes.bool,
     onRequestClose: PropTypes.func,
-    onRequestOpen: PropTypes.func
+    onRequestOpen: PropTypes.func,
+    shouldCloseOnOverlayClick:PropTypes.bool
+};
+
+Modal.defaultProps = {
+    shouldCloseOnOverlayClick: true,
 };
 
 const mapStateToProps = state => ({

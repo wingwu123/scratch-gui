@@ -202,14 +202,12 @@ class DownloadModal extends React.Component {
 
     handleBuild() {
 
-        this.handleConnect(() => {
-            this.generateCode((code) => {
-                this.handleSaveCode(code, () => {
-                    this.handleCompile(() => {
-                        this.handleUpload(() => {
-                            this.addMessage('下载完成！');
-                            this.setProgress(100, 'success');
-                        });
+        this.generateCode((code) => {
+            this.handleSaveCode(code, () => {
+                this.handleCompile(() => {
+                    this.handleUpload(() => {
+                        this.addMessage('下载完成！');
+                        this.setProgress(100, 'success');
                     });
                 });
             });

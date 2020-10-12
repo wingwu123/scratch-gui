@@ -83,7 +83,8 @@ const projectData = translateFunction => {
                         dataFormat: 'svg',
                         rotationCenterX: 48,
                         rotationCenterY: 50
-                    },
+                    }
+                    /*,
                     {
                         assetId: 'e6ddc55a6ddd9cc9d84fe0b4c21e016f',
                         name: translator(messages.costume, {index: 2}),
@@ -93,6 +94,7 @@ const projectData = translateFunction => {
                         rotationCenterX: 46,
                         rotationCenterY: 53
                     }
+                    */
                 ],
                 sounds: [
                     {
@@ -116,8 +118,8 @@ const projectData = translateFunction => {
             },
             {
                 isStage: false,
-                deviceType:"deviceType-default",
-                name: "device-1", //translator(messages.sprite, {index: 1}),
+                deviceType:"WOBOT",
+                name: "WOBOT", //translator(messages.sprite, {index: 1}),
                 variables: {},
                 lists: {},
                 broadcasts: {},
@@ -132,7 +134,8 @@ const projectData = translateFunction => {
                         dataFormat: 'svg',
                         rotationCenterX: 48,
                         rotationCenterY: 50
-                    },
+                    }
+                    /*,
                     {
                         assetId: 'e6ddc55a6ddd9cc9d84fe0b4c21e016f',
                         name: translator(messages.costume, {index: 2}),
@@ -141,7 +144,7 @@ const projectData = translateFunction => {
                         dataFormat: 'svg',
                         rotationCenterX: 46,
                         rotationCenterY: 53
-                    }
+                    }*/
                 ],
                 sounds: [
                     {

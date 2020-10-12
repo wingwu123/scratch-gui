@@ -7,6 +7,7 @@ import {ScratchPaintReducer} from 'scratch-paint';
 import {setFullScreen, setPlayer} from './reducers/mode';
 import {remixProject} from './reducers/project-state';
 import {setAppElement} from 'react-modal';
+import ServiceInstance from './broker/ServiceInstance';
 
 const guiReducers = {
     locales: LocalesReducer,
@@ -29,5 +30,6 @@ export {
     localesInitialState,
     remixProject,
     setFullScreen,
-    setPlayer
+    setPlayer,
+    ServiceInstance
 };

@@ -13,6 +13,8 @@ const MODAL_SOUND_RECORDER = 'soundRecorder';
 const MODAL_CONNECTION = 'connectionModal';
 const MODAL_TIPS_LIBRARY = 'tipsLibrary';
 const MODAL_DOWNLOAD = 'downloadModal';
+const MODAL_ARDUINO_CONN = 'arduinoConnModal';
+const MODAL_ABOUT = 'aboutModal';
 
 const initialState = {
     [MODAL_BACKDROP_LIBRARY]: false,
@@ -26,7 +28,9 @@ const initialState = {
     [MODAL_SOUND_RECORDER]: false,
     [MODAL_CONNECTION]: false,
     [MODAL_TIPS_LIBRARY]: false,
-    [MODAL_DOWNLOAD]: false
+    [MODAL_DOWNLOAD]: false,
+    [MODAL_ARDUINO_CONN]: false,
+    [MODAL_ABOUT]: false
 };
 
 const reducer = function (state, action) {
@@ -89,6 +93,9 @@ const openSoundRecorder = function () {
 const openConnectionModal = function () {
     return openModal(MODAL_CONNECTION);
 };
+const openArduinoConnModal = function () {
+    return openModal(MODAL_ARDUINO_CONN);
+};
 const openTipsLibrary = function () {
     return openModal(MODAL_TIPS_LIBRARY);
 };
@@ -128,6 +135,18 @@ const closeTipsLibrary = function () {
 const closeConnectionModal = function () {
     return closeModal(MODAL_CONNECTION);
 };
+const closeArduinoConnModal = function () {
+    return closeModal(MODAL_ARDUINO_CONN);
+};
+
+//about model
+const openAboutModal = function () {
+    return openModal(MODAL_ABOUT);
+};
+const closeAboutModal = function () {
+    return closeModal(MODAL_ABOUT);
+};
+
 export {
     reducer as default,
     initialState as modalsInitialState,
@@ -143,6 +162,7 @@ export {
     openTelemetryModal,
     openTipsLibrary,
     openConnectionModal,
+    openArduinoConnModal,
     closeBackdropLibrary,
     closeCameraCapture,
     closeDownloadModal,
@@ -154,5 +174,9 @@ export {
     closeSoundRecorder,
     closeTelemetryModal,
     closeTipsLibrary,
-    closeConnectionModal
+    closeConnectionModal,
+    closeArduinoConnModal,
+
+    openAboutModal,
+    closeAboutModal,
 };

@@ -39,6 +39,9 @@ class ScratchImage extends React.PureComponent {
             storage
                 .load(imageSource.assetType, imageSource.assetId)
                 .then(asset => {
+
+                    console.info("image asset", asset.assetId, asset.assetType);
+
                     if (!nextImage.wasUnmounted) {
                         const dataURI = asset.encodeDataURI();
 

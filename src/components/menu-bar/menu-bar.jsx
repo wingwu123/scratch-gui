@@ -72,8 +72,17 @@ import languageIcon from '../language-selector/language-icon.svg';
 import aboutIcon from './icon--about.svg';
 
 import scratchLogo from './scratch-logo.svg';
+import wobotLogo from './wobot-logo.svg';
 
 import sharedMessages from '../../lib/shared-messages';
+
+import ModeButton from '../mode-button/ModeButton.jsx';
+
+import {
+    disconnected,
+    setConnectMode,
+    CONNECT_MODE_DEWNLOAD,
+    CONNECT_MODE_ONLINE} from '../../reducers/device-connected';
 
 const ariaMessages = defineMessages({
     language: {
@@ -169,7 +178,8 @@ class MenuBar extends React.Component {
             'handleLanguageMouseUp',
             'handleRestoreOption',
             'getSaveToComputerHandler',
-            'restoreOptionMessage'
+            'restoreOptionMessage',
+            'handleToggleButtonClicked'
         ]);
     }
     componentDidMount () {
@@ -184,14 +194,36 @@ class MenuBar extends React.Component {
         // downloading or logging in first.
         // Note that if user is logged in and editing someone else's project,
         // they'll lose their work.
-        const readyToReplaceProject = this.props.confirmReadyToReplaceProject(
-            this.props.intl.formatMessage(sharedMessages.replaceProjectWarning)
-        );
-        this.props.onRequestCloseFile();
-        if (readyToReplaceProject) {
-            this.props.onClickNew(this.props.canSave && this.props.canCreateNew);
+
+        let self = this;
+
+        let callback = function(readyToReplaceProject){
+
+            self.props.onRequestCloseFile();
+    
+            if (readyToReplaceProject) {
+                self.props.onClickNew(self.props.canSave && self.props.canCreateNew);
+            }
+            self.props.onRequestCloseFile();
+        };
+
+        let message = this.props.intl.formatMessage(sharedMessages.replaceProjectWarning);
+
+        if(!this.props.onSaveConfirm)
+        {
+            const readyToReplaceProject = this.props.confirmReadyToReplaceProject(
+                message
+            );
+
+            callback(readyToReplaceProject);
+            
         }
-        this.props.onRequestCloseFile();
+        else{
+
+            this.props.onSaveConfirm({title:"title", message:message, callback:(options) =>{
+                callback(options.result == 0);
+            }});
+        }
     }
     handleClickRemix () {
         this.props.onClickRemix();
@@ -254,6 +286,14 @@ class MenuBar extends React.Component {
             this.props.onClickLanguage(e);
         }
     }
+
+    handleToggleButtonClicked(checked) {
+
+        this.props.setConnectMode(checked ? CONNECT_MODE_ONLINE : CONNECT_MODE_DEWNLOAD);
+
+        this.props.deviceDisconnected();
+    }
+
     restoreOptionMessage (deletedItem) {
         switch (deletedItem) {
         case 'Sprite':
@@ -325,8 +365,8 @@ class MenuBar extends React.Component {
                 {remixMessage}
             </Button>
         );
-        // Show the About button only if we have a handler for it (like in the desktop app)
-        const aboutButton = this.props.onClickAbout ? <AboutButton onClick={this.props.onClickAbout} /> : null;
+
+        const onlineMode = (this.props.connectMode == CONNECT_MODE_ONLINE);
         return (
             <Box
                 className={classNames(
@@ -522,6 +562,7 @@ class MenuBar extends React.Component {
                             username={this.props.authorUsername}
                         />
                     ) : null)}
+
                     <div className={classNames(styles.menuBarItem)}>
                         {this.props.canShare ? (
                             (this.props.isShowingProject || this.props.isUpdating) && (
@@ -579,6 +620,10 @@ class MenuBar extends React.Component {
                 {/* show the proper UI in the account menu, given whether the user is
                 logged in, and whether a session is available to log in with */}
                 <div className={styles.accountInfoGroup}>
+
+                    <ModeButton onChange={this.handleToggleButtonClicked} checked={onlineMode} 
+                            height={32} width={160}/>
+
                     <div className={styles.menuBarItem}>
                         {this.props.canSave && (
                             <SaveStatus />
@@ -705,8 +750,6 @@ class MenuBar extends React.Component {
                         </React.Fragment>
                     )}
                 </div>
-
-                {aboutButton}
             </Box>
         );
     }
@@ -747,6 +790,7 @@ MenuBar.propTypes = {
     onClickLanguage: PropTypes.func,
     onClickLogin: PropTypes.func,
     onClickLogo: PropTypes.func,
+    onSaveConfirm: PropTypes.func,
     onClickNew: PropTypes.func,
     onClickRemix: PropTypes.func,
     onClickSave: PropTypes.func,
@@ -774,7 +818,7 @@ MenuBar.propTypes = {
 };
 
 MenuBar.defaultProps = {
-    logo: scratchLogo,
+    logo: wobotLogo,
     onShare: () => {}
 };
 
@@ -796,7 +840,8 @@ const mapStateToProps = (state, ownProps) => {
         username: user ? user.username : null,
         userOwnsProject: ownProps.authorUsername && user &&
             (ownProps.authorUsername === user.username),
-        vm: state.scratchGui.vm
+        vm: state.scratchGui.vm,
+        connectMode: state.scratchGui.deviceConnected.mode
     };
 };
 
@@ -817,6 +862,13 @@ const mapDispatchToProps = dispatch => ({
     onClickRemix: () => dispatch(remixProject()),
     onClickSave: () => dispatch(manualUpdateProject()),
     onClickSaveAsCopy: () => dispatch(saveProjectAsCopy()),
+    setConnectMode :(mode) =>{ 
+        dispatch(setConnectMode(mode));
+        console.info("setConnectMode ", mode);
+    },
+    deviceDisconnected : () => {
+        dispatch(disconnected());
+    },
     onSeeCommunity: () => dispatch(setPlayer(true))
 });
 

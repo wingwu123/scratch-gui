@@ -11,7 +11,7 @@ class WebGlModal extends React.Component {
         return (
             <WebGlModalComponent
                 isRtl={this.props.isRtl}
-                onBack={this.handleCancel}
+                onBack={this.props.onCancel}
             />
         );
     }

@@ -15,7 +15,8 @@ import {
     activateTab,
     BLOCKS_TAB_INDEX,
     COSTUMES_TAB_INDEX,
-    SOUNDS_TAB_INDEX
+    SOUNDS_TAB_INDEX,
+    CCODE_TAB_INDEX
 } from '../reducers/editor-tab';
 
 import {
@@ -29,7 +30,8 @@ import {
     closeCostumeLibrary,
     closeBackdropLibrary,
     closeTelemetryModal,
-    openExtensionLibrary
+    openExtensionLibrary,
+    openAboutModal,
 } from '../reducers/modals';
 
 import FontLoaderHOC from '../lib/font-loader-hoc.jsx';
@@ -46,6 +48,14 @@ import cloudManagerHOC from '../lib/cloud-manager-hoc.jsx';
 import GUIComponent from '../components/gui/gui.jsx';
 import {setIsScratchDesktop} from '../lib/isScratchDesktop.js';
 
+import ServiceHOC from './service-hoc.jsx';
+
+import ServiceInstance from '../broker/ServiceInstance';
+
+import {
+    disconnected
+} from '../reducers/device-connected';
+
 
 class GUI extends React.Component {
     componentDidMount () {
@@ -53,8 +63,25 @@ class GUI extends React.Component {
         this.props.onStorageInit(storage);
         this.props.onVmInit(this.props.vm);
 
+        if(this.props.electron)
+        {
+            //let {fs, path, root_path} = this.props.electron;
+            //storage.addFileHelper(fs, path, root_path );
+
+            if(this.props.electron.port)
+            {
+                this.props.electron.port.on("close", (disconnected)=>{
+
+                    this.props.deviceDisconnect();
+
+                });
+                this.props.vm.setPortChannel(this.props.electron.port);
+            }
+        }
     }
+
     componentDidUpdate (prevProps) {
+
         if (this.props.projectId !== prevProps.projectId && this.props.projectId !== null) {
             this.props.onUpdateProjectId(this.props.projectId);
         }
@@ -88,6 +115,7 @@ class GUI extends React.Component {
             fetchingProject,
             isLoading,
             loadingStateVisible,
+            deviceDisconnect,
             ...componentProps
         } = this.props;
 
@@ -127,7 +155,7 @@ GUI.propTypes = {
 
 GUI.defaultProps = {
     isScratchDesktop: false,
-    onStorageInit: storageInstance => storageInstance.addOfficialScratchWebStores(),
+    onStorageInit: storageInstance =>  storageInstance.addOfficialScratchWebStores(),
     onProjectLoaded: () => {},
     onUpdateProjectId: () => {},
     onVmInit: (/* vm */) => {}
@@ -135,6 +163,7 @@ GUI.defaultProps = {
 
 const mapStateToProps = state => {
     const loadingState = state.scratchGui.projectState.loadingState;
+    const isDevice = (state.scratchGui.vm.editingTarget && state.scratchGui.vm.editingTarget.deviceType != '');
     return {
         activeTabIndex: state.scratchGui.editorTab.activeTabIndex,
 		targetTabIndex: state.scratchGui.targetTab.activeTabIndex,
@@ -143,8 +172,11 @@ const mapStateToProps = state => {
         blocksTabVisible: state.scratchGui.editorTab.activeTabIndex === BLOCKS_TAB_INDEX,
         cardsVisible: state.scratchGui.cards.visible,
         connectionModalVisible: state.scratchGui.modals.connectionModal,
+        arduinoConnModalVisible: state.scratchGui.modals.arduinoConnModal,
+        aboutModalVisible: state.scratchGui.modals.aboutModal,
         costumeLibraryVisible: state.scratchGui.modals.costumeLibrary,
-        costumesTabVisible: state.scratchGui.editorTab.activeTabIndex === COSTUMES_TAB_INDEX,
+        costumesTabVisible: (state.scratchGui.editorTab.activeTabIndex === COSTUMES_TAB_INDEX) && !isDevice,
+        ccodeTabVisible: (state.scratchGui.editorTab.activeTabIndex === COSTUMES_TAB_INDEX) && isDevice,
         error: state.scratchGui.projectState.error,
         isError: getIsError(loadingState),
         isFullScreen: state.scratchGui.mode.isFullScreen,
@@ -161,7 +193,7 @@ const mapStateToProps = state => {
         telemetryModalVisible: state.scratchGui.modals.telemetryModal,
         tipsLibraryVisible: state.scratchGui.modals.tipsLibrary,
         vm: state.scratchGui.vm,
-        isDevice: (state.scratchGui.vm.editingTarget && state.scratchGui.vm.editingTarget.deviceType != '')
+        isDevice: isDevice
     };
 };
 
@@ -170,10 +202,15 @@ const mapDispatchToProps = dispatch => ({
     onActivateTab: tab => dispatch(activateTab(tab)),
     onActivateCostumesTab: () => dispatch(activateTab(COSTUMES_TAB_INDEX)),
     onActivateSoundsTab: () => dispatch(activateTab(SOUNDS_TAB_INDEX)),
+    onActivateCCodeTab: () => dispatch(activateTab(CCODE_TAB_INDEX)),
     onRequestCloseBackdropLibrary: () => dispatch(closeBackdropLibrary()),
     onRequestCloseCostumeLibrary: () => dispatch(closeCostumeLibrary()),
     onRequestCloseTelemetryModal: () => dispatch(closeTelemetryModal()),
-	onTargetTabActivate: tab => dispatch(targetTabActivate(tab))
+    onTargetTabActivate: tab => dispatch(targetTabActivate(tab)),
+    onClickLogo:() => dispatch(openAboutModal()),
+    deviceDisconnect : () => {
+        dispatch(disconnected());
+    },
 });
 
 const ConnectedGUI = injectIntl(connect(
@@ -185,6 +222,7 @@ const ConnectedGUI = injectIntl(connect(
 // the hierarchy of HOC constructor calls clearer here; it has nothing to do with redux's
 // ability to compose reducers.
 const WrappedGui = compose(
+    ServiceHOC,
     LocalizationHOC,
     ErrorBoundaryHOC('Top Level App'),
     FontLoaderHOC,

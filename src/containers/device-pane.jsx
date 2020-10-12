@@ -13,7 +13,7 @@ import {setReceivedBlocks} from '../reducers/hovered-target';
 import {showStandardAlert, closeAlertWithId} from '../reducers/alerts';
 import {setRestore} from '../reducers/restore-deletion';
 import DragConstants from '../lib/drag-constants';
-import DeviceSelectorComponent from '../components/device-selector/device-selector.jsx';
+import DeviceSelector from './device-selector.jsx';
 
 import spriteLibraryContent from '../lib/libraries/sprites.json';
 import {handleFileUpload, spriteUpload} from '../lib/file-uploader.js';
@@ -23,6 +23,7 @@ import {highlightTarget} from '../reducers/targets';
 import {fetchSprite, fetchCode} from '../lib/backpack-api';
 import randomizeSpritePosition from '../lib/randomize-sprite-position';
 import downloadBlob from '../lib/download-blob';
+import {disconnected} from '../reducers/device-connected'
 
 
 
@@ -59,6 +60,7 @@ class DevicePane extends React.Component {
     componentWillUnmount () {
         this.props.vm.removeListener('BLOCK_DRAG_END', this.handleBlockDragEnd);
     }
+
     handleChangeSpriteDirection (direction) {
         this.props.vm.postSpriteInfo({direction});
     }
@@ -226,8 +228,12 @@ class DevicePane extends React.Component {
             ...componentProps
         } = this.props;
 
+        /*
+        onDeleteSprite={this.handleDeleteSprite}
+        */
+
         return (
-            <DeviceSelectorComponent
+            <DeviceSelector
                 {...componentProps}
                 selectedId={this.props.editingTarget}
                 fileInputRef={this.setFileInput}
@@ -239,7 +245,8 @@ class DevicePane extends React.Component {
                 onChangeSpriteVisibility={this.handleChangeSpriteVisibility}
                 onChangeSpriteX={this.handleChangeSpriteX}
                 onChangeSpriteY={this.handleChangeSpriteY}
-                onDeleteSprite={this.handleDeleteSprite}
+
+                onDeleteSprite={null}
                 onDrop={this.handleDrop}
                 onDuplicateSprite={this.handleDuplicateSprite}
                 onExportSprite={this.handleExportSprite}
@@ -268,7 +275,8 @@ const mapStateToProps = state => ({
     stage: state.scratchGui.targets.stage,
     raiseSprites: state.scratchGui.blockDrag,
     spriteLibraryVisible: state.scratchGui.modals.spriteLibrary,
-    isDownloadVisible:state.scratchGui.modals.downloadModal
+    isDownloadVisible: state.scratchGui.modals.downloadModal,
+    isDeviceConnected: state.scratchGui.deviceConnected.connected
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -292,7 +300,8 @@ const mapDispatchToProps = dispatch => ({
         dispatch(highlightTarget(id));
     },
     onCloseImporting: () => dispatch(closeAlertWithId('importingAsset')),
-    onShowImporting: () => dispatch(showStandardAlert('importingAsset'))
+    onShowImporting: () => dispatch(showStandardAlert('importingAsset')),
+    onDisconnectClick: () => dispatch(disconnected())
 });
 
 export default injectIntl(connect(

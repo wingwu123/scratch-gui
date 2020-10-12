@@ -16,6 +16,7 @@
     "test:lint": "eslint . --ext .js,.jsx",
     "test:unit": "jest test[\\\\/]unit",
     "test:smoke": "jest --runInBand test[\\\\/]smoke",
+    "npm-link": "npm link scratch-blocks && npm link scratch-storage && npm link scratch-vm && npm link scratch-l10n",
     "watch": "webpack --progress --colors --watch"
   },
   "author": "Massachusetts Institute of Technology",
@@ -147,6 +148,7 @@
     "react-dock": "^0.2.4",
     "react-monaco-editor": "^0.39.1",
     "react-sizeme": "^2.6.12",
-    "react-sweet-progress": "^1.1.2"
+    "react-sweet-progress": "^1.1.2",
+    "react-switch": "^5.0.1"
   }
 }

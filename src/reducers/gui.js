@@ -32,6 +32,8 @@ import decks from '../lib/libraries/decks/index.jsx';
 
 import editorTypeReducer, {editorTypeInitialState} from './editor-type';
 
+import deviceConnectedReducer, {connectedInitialState} from './device-connected';
+
 const guiMiddleware = compose(applyMiddleware(throttle(300, {leading: true, trailing: true})));
 
 const guiInitialState = {
@@ -63,6 +65,7 @@ const guiInitialState = {
     vm: vmInitialState,
     vmStatus: vmStatusInitialState,
     editorType: editorTypeInitialState,
+    deviceConnected: connectedInitialState,
 };
 
 const initPlayer = function (currentState) {
@@ -162,7 +165,8 @@ const guiReducer = combineReducers({
     toolbox: toolboxReducer,
     vm: vmReducer,
     vmStatus: vmStatusReducer,
-    editorType: editorTypeReducer
+    editorType: editorTypeReducer,
+    deviceConnected: deviceConnectedReducer
 });
 
 export {

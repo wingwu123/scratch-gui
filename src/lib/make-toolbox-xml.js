@@ -1,4 +1,8 @@
 import ScratchBlocks from 'scratch-blocks';
+import {
+    CONNECT_MODE_DEWNLOAD,
+    CONNECT_MODE_ONLINE
+} from '../reducers/device-connected';
 
 const categorySeparator = '<sep gap="36"/>';
 
@@ -438,7 +442,46 @@ const device_looks = function (deviceType, targetId) {
             </value>
         </block>
         <block type="looks_set_led_light_color"/>
-        <block type="looks_off_led_light"/>`}
+        <block type="looks_off_led_light"/>
+        <block type="looks_integrated_led">
+            <value name="R">
+                <shadow type="math_decimal_0_255">
+                    <field name="NUM">255</field>
+                </shadow>
+            </value>
+            <value name="G">
+                <shadow type="math_decimal_0_255">
+                    <field name="NUM">255</field>
+                </shadow>
+            </value>
+            <value name="B">
+                <shadow type="math_decimal_0_255">
+                    <field name="NUM">255</field>
+                </shadow>
+            </value>
+        </block>
+        <block type="looks_led_strip">
+            <value name="LED_ID">
+                <shadow type="math_decimal_1_60">
+                    <field name="NUM">1</field>
+                </shadow>
+            </value>
+            <value name="R">
+                <shadow type="math_decimal_0_255">
+                    <field name="NUM">255</field>
+                </shadow>
+            </value>
+            <value name="G">
+                <shadow type="math_decimal_0_255">
+                    <field name="NUM">255</field>
+                </shadow>
+            </value>
+            <value name="B">
+                <shadow type="math_decimal_0_255">
+                    <field name="NUM">255</field>
+                </shadow>
+            </value>
+        </block>`}
         ${categorySeparator}
     </category>
     `;
@@ -539,10 +582,36 @@ const events = function (isStage) {
 };
 
 
-const device_events = function (deviceType, targetId) {
+const device_events = function (deviceType, targetId, connectMode) {
+
+    const online = ( connectMode == CONNECT_MODE_ONLINE);
+
     return `
     <category name="%{BKY_CATEGORY_EVENTS}" id="events" colour="#FFD500" secondaryColour="#CC9900">
-        <block type="event_when_wobot_started"/>
+        ${online ?
+            `
+            <block type="event_whenflagclicked" />
+            <block type="event_whenkeypressed" />
+            ${blockSeparator}
+            <block type="event_whenbroadcastreceived" >
+            </block>
+            <block type="event_broadcast" >
+                <value name="BROADCAST_INPUT">
+                    <shadow type="event_broadcast_menu"></shadow>
+                </value>
+            </block>
+            <block type="event_broadcastandwait" >
+                <value name="BROADCAST_INPUT">
+                    <shadow type="event_broadcast_menu"></shadow>
+                </value>
+            </block>
+            `
+            :
+            `
+            <block type="event_when_wobot_started" />
+            <block type="event_when_wobot_loop" />
+            `
+        }
         ${categorySeparator}
     </category>
     `;
@@ -1101,7 +1170,7 @@ const xmlClose = '</xml>';
  * @returns {string} - a ScratchBlocks-style XML document for the contents of the toolbox.
  */
 const makeToolboxXML = function (isStage, targetId, categoriesXML = [],
-    costumeName = '', backdropName = '', soundName = '', deviceType = '') {
+    costumeName = '', backdropName = '', soundName = '', deviceType = '', connectMode = CONNECT_MODE_DEWNLOAD) {
     const gap = [categorySeparator];
 
     costumeName = xmlEscape(costumeName);
@@ -1120,7 +1189,7 @@ const makeToolboxXML = function (isStage, targetId, categoriesXML = [],
     };
     
     let everything = [
-        xmlOpen,
+        `<xml style="display: none" targetId="${targetId}">`,
     ];
 
     if(deviceType == '')
@@ -1153,7 +1222,7 @@ const makeToolboxXML = function (isStage, targetId, categoriesXML = [],
         everything = everything.concat([eventsXML, gap]);
     }
     else{
-        const eventsXML = device_events(deviceType, targetId);
+        const eventsXML = device_events(deviceType, targetId, connectMode);
         everything = everything.concat([eventsXML, gap]);
     }
     

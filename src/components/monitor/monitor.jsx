@@ -39,6 +39,8 @@ const MonitorComponent = props => {
         holdToDisplay={props.mode === 'slider' ? -1 : 1000}
         id={`monitor-${props.label}`}
     >
+        <div>
+
         <Draggable
             bounds=".monitor-overlay" // Class for monitor container
             cancel=".no-drag" // Class used for slider input to prevent drag
@@ -113,6 +115,9 @@ const MonitorComponent = props => {
                     </MenuItem>}
             </ContextMenu>
         ), document.body)}
+
+        </div>
+        
     </ContextMenuTrigger>
 
     );

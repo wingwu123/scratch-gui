@@ -153,7 +153,13 @@ const ProjectSaverHOC = function (WrappedComponent) {
             return props.canCreateNew && props.isShowingWithoutId;
         }
         updateProjectToStorage () {
+
+            console.info("onShowSavingAlert begin");
+
             this.props.onShowSavingAlert();
+
+            console.info("onShowSavingAlert end");
+
             return this.storeProject(this.props.reduxProjectId)
                 .then(() => {
                     // there's an http response object available here, but we don't need to examine

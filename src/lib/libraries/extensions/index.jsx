@@ -107,6 +107,7 @@ export default [
         ),
         featured: true
     },
+    /*
     {
         name: (
             <FormattedMessage
@@ -150,7 +151,7 @@ export default [
         ),
         featured: true,
         internetConnectionRequired: true
-    },
+    },*/
     {
         name: 'Makey Makey',
         extensionId: 'makeymakey',
@@ -166,6 +167,7 @@ export default [
         ),
         featured: true
     },
+    /*
     {
         name: 'micro:bit',
         extensionId: 'microbit',
@@ -318,4 +320,5 @@ export default [
         ),
         helpLink: 'https://scratch.mit.edu/vernier'
     }
+    */
 ];

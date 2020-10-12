@@ -10,8 +10,11 @@ import {setPlayer, setFullScreen} from '../reducers/mode.js';
 
 import locales from 'scratch-l10n';
 import {detectLocale} from './detect-locale';
+import ServiceInstance from '../broker/ServiceInstance';
 
 const composeEnhancers = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
+
+const config_id_currentLang = "lang.current";
 
 /*
  * Higher Order Component to provide redux state. If an `intl` prop is provided
@@ -31,7 +34,13 @@ const AppStateHOC = function (WrappedComponent, localesOnly) {
             let enhancer;
 
             let initializedLocales = localesInitialState;
-            const locale = detectLocale(Object.keys(locales));
+            let locale = ServiceInstance.configure.getSync(config_id_currentLang);
+
+            if(locale == "")
+            {
+                locale = detectLocale(Object.keys(locales));
+            }
+            
             if (locale !== 'en') {
                 initializedLocales = initLocale(initializedLocales, locale);
             }
